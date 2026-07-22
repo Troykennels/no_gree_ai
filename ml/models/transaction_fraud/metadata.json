@@ -1,0 +1,175 @@
+{
+  "name": "transaction_fraud",
+  "version": "1.0.0",
+  "trained_at": "2026-07-21T20:10:07.729744+00:00",
+  "algorithm": "xgboost",
+  "candidates": [
+    "xgboost",
+    "random_forest"
+  ],
+  "selection_metric": "pr_auc",
+  "explain_method": "native TreeSHAP (mean |contribution|)",
+  "decision_threshold": 0.5,
+  "scale_pos_weight": 12.19,
+  "n_features": 65,
+  "n_numeric": 51,
+  "n_categorical": 14,
+  "split": "out_of_time (80/20 by TransactionDT)",
+  "training_profile": {
+    "source": "IEEE-CIS Fraud Detection",
+    "mode": "frugal",
+    "columns": 67,
+    "recent_window": 250000,
+    "total_available": 590540,
+    "sampled": true,
+    "sample_rows": 120000
+  },
+  "metrics": {
+    "accuracy": 0.918,
+    "precision": 0.4847,
+    "recall": 0.7489,
+    "f1": 0.5885,
+    "roc_auc": 0.9231,
+    "pr_auc": 0.6805,
+    "confusion_matrix": [
+      [
+        20623,
+        1497
+      ],
+      [
+        472,
+        1408
+      ]
+    ],
+    "threshold": 0.5
+  },
+  "all_metrics": {
+    "xgboost": {
+      "accuracy": 0.918,
+      "precision": 0.4847,
+      "recall": 0.7489,
+      "f1": 0.5885,
+      "roc_auc": 0.9231,
+      "pr_auc": 0.6805,
+      "confusion_matrix": [
+        [
+          20623,
+          1497
+        ],
+        [
+          472,
+          1408
+        ]
+      ],
+      "threshold": 0.5
+    },
+    "random_forest": {
+      "accuracy": 0.887,
+      "precision": 0.3861,
+      "recall": 0.7511,
+      "f1": 0.51,
+      "roc_auc": 0.9083,
+      "pr_auc": 0.634,
+      "confusion_matrix": [
+        [
+          19875,
+          2245
+        ],
+        [
+          468,
+          1412
+        ]
+      ],
+      "threshold": 0.5
+    }
+  },
+  "top_features": [
+    {
+      "feature": "C13",
+      "mean_abs_shap": 0.28204
+    },
+    {
+      "feature": "TransactionAmt",
+      "mean_abs_shap": 0.24976
+    },
+    {
+      "feature": "C14",
+      "mean_abs_shap": 0.2117
+    },
+    {
+      "feature": "C1",
+      "mean_abs_shap": 0.20787
+    },
+    {
+      "feature": "card1",
+      "mean_abs_shap": 0.20452
+    },
+    {
+      "feature": "card6",
+      "mean_abs_shap": 0.17978
+    },
+    {
+      "feature": "D1",
+      "mean_abs_shap": 0.17901
+    },
+    {
+      "feature": "card2",
+      "mean_abs_shap": 0.17722
+    },
+    {
+      "feature": "V70",
+      "mean_abs_shap": 0.17326
+    },
+    {
+      "feature": "C11",
+      "mean_abs_shap": 0.16208
+    },
+    {
+      "feature": "V258",
+      "mean_abs_shap": 0.16123
+    },
+    {
+      "feature": "D11",
+      "mean_abs_shap": 0.13722
+    },
+    {
+      "feature": "D4",
+      "mean_abs_shap": 0.11824
+    },
+    {
+      "feature": "D2",
+      "mean_abs_shap": 0.11663
+    },
+    {
+      "feature": "D10",
+      "mean_abs_shap": 0.11659
+    },
+    {
+      "feature": "M6",
+      "mean_abs_shap": 0.11227
+    },
+    {
+      "feature": "V308",
+      "mean_abs_shap": 0.11153
+    },
+    {
+      "feature": "D15",
+      "mean_abs_shap": 0.10852
+    },
+    {
+      "feature": "addr1",
+      "mean_abs_shap": 0.10784
+    },
+    {
+      "feature": "card5",
+      "mean_abs_shap": 0.10399
+    }
+  ],
+  "dataset": {
+    "source": "IEEE-CIS Fraud Detection",
+    "rows": 120000,
+    "train_rows": 96000,
+    "test_rows": 24000,
+    "fraud_rate_test": 0.0783
+  }
+}

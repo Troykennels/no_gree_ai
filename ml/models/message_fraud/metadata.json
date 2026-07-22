@@ -1,0 +1,138 @@
+{
+  "name": "message_fraud",
+  "version": "1.2.0",
+  "trained_at": "2026-07-21T09:12:46.907658+00:00",
+  "algorithm": "TF-IDF + engineered Nigeria-aware signals + XGBoost",
+  "calibration": "platt (sigmoid on margin)",
+  "decision_threshold": 0.2026,
+  "threshold_objective": "F2 (recall-weighted)",
+  "n_estimators": 180,
+  "risk_bands": [
+    {
+      "band": "critical",
+      "min": 0.9,
+      "label": "Almost certainly fraud"
+    },
+    {
+      "band": "high",
+      "min": 0.7,
+      "label": "Very likely fraud"
+    },
+    {
+      "band": "elevated",
+      "min": 0.45,
+      "label": "Suspicious - be careful"
+    },
+    {
+      "band": "low",
+      "min": 0.2,
+      "label": "Probably safe"
+    },
+    {
+      "band": "minimal",
+      "min": 0.0,
+      "label": "Looks safe"
+    }
+  ],
+  "n_features_engineered": 13,
+  "engineered_features": [
+    {
+      "name": "credential_request",
+      "description": "Asks for BVN, OTP, PIN, card or account details"
+    },
+    {
+      "name": "urgency_pressure",
+      "description": "Creates false urgency (expiry, blocking, 'act now')"
+    },
+    {
+      "name": "authority_impersonation",
+      "description": "Impersonates a bank, the CBN, or an agency"
+    },
+    {
+      "name": "reward_bait",
+      "description": "Promises a prize, winnings, or free reward"
+    },
+    {
+      "name": "loan_bait",
+      "description": "Offers an instant / no-collateral loan"
+    },
+    {
+      "name": "investment_bait",
+      "description": "Promises guaranteed or doubled investment returns"
+    },
+    {
+      "name": "payment_action",
+      "description": "Pushes you to send money, pay a fee, or buy a voucher"
+    },
+    {
+      "name": "has_link",
+      "description": "Contains a clickable link"
+    },
+    {
+      "name": "link_count",
+      "description": "Contains multiple links"
+    },
+    {
+      "name": "has_phone",
+      "description": "Contains a phone number to call or message"
+    },
+    {
+      "name": "shouty_caps",
+      "description": "Heavy use of ALL-CAPS words"
+    },
+    {
+      "name": "exclamation_density",
+      "description": "Excessive exclamation marks"
+    },
+    {
+      "name": "money_mentioned",
+      "description": "Mentions a naira amount"
+    }
+  ],
+  "cross_validation": {
+    "roc_auc": [
+      0.9828,
+      0.0066
+    ],
+    "pr_auc": [
+      0.9873,
+      0.0039
+    ],
+    "f1": [
+      0.9438,
+      0.013
+    ]
+  },
+  "metrics": {
+    "roc_auc": 0.995,
+    "pr_auc": 0.9959,
+    "precision": 0.9615,
+    "recall": 0.9777,
+    "f1": 0.9695,
+    "fbeta": 0.9744,
+    "brier_raw": 0.02,
+    "brier_calibrated": 0.0199,
+    "confusion_matrix": [
+      [
+        172,
+        7
+      ],
+      [
+        4,
+        175
+      ]
+    ],
+    "test_size": 358
+  },
+  "dataset": {
+    "origin": "processed_corpora",
+    "sources": {
+      "nigeria_fraud_sms": 1140,
+      "sms_spam": 5153
+    },
+    "n_fraud": 1193,
+    "n_legit": 1193,
+    "balanced": true,
+    "seed": 20260721
+  }
+}

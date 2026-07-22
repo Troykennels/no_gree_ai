@@ -1,0 +1,13 @@
+**/node_modules
+**/.next
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.git
+# Datasets (60MB+ parquet) are never needed in an image. The trained models are
+# tiny (~1.7MB) and ARE baked into the API image so it serves out of the box.
+ml/data
+*.log
+.env
+*.db

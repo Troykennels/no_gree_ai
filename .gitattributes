@@ -1,0 +1,11 @@
+# Normalise line endings to LF (safe for Linux Docker builds & CI).
+* text=auto eol=lf
+
+# Binary assets — never touch line endings.
+*.png binary
+*.jpg binary
+*.ico binary
+*.joblib binary
+*.pkl binary
+*.parquet binary
+*.safetensors binary

@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ML artifacts: the trained models are tiny (~1.7MB total) and ARE committed so
+# the app deploys from git (Railway/Vercel) and serves out of the box. Large
+# transformer checkpoints (if ever added) stay out.
+ml/models/scam_transformer/
+*.safetensors
+
+# ML datasets: built/downloaded, never committed (some are 60MB+ parquet).
+# The pipeline regenerates them; keep the folders via .gitkeep only.
+ml/data/raw/
+ml/data/processed/
+ml/data/generated/
+ml/data/**/*.csv
+*.parquet
+!ml/data/.gitkeep
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+dist/
+.turbo/
+*.tsbuildinfo
+
+# Env & secrets
+.env
+.env.local
+*.local
+
+# Local SQLite dev database
+*.db
+*.sqlite3
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

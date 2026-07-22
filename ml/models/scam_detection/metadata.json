@@ -1,0 +1,36 @@
+{
+  "name": "scam_detection",
+  "version": "1.0.0",
+  "trained_at": "2026-07-21T11:46:34.261878+00:00",
+  "algorithm": "TF-IDF (1-2 gram) + Logistic Regression",
+  "labels": [
+    "Safe",
+    "Suspicious",
+    "Scam"
+  ],
+  "suspicious_threshold": 0.2116,
+  "scam_threshold": 0.3847,
+  "threshold_objective": "F2 (recall-weighted)",
+  "cross_validation": {
+    "roc_auc_mean": 0.9923,
+    "roc_auc_std": 0.0017
+  },
+  "metrics": {
+    "roc_auc": 0.9989,
+    "pr_auc": 0.999,
+    "precision": 0.978,
+    "recall": 0.9944,
+    "f1": 0.9861,
+    "test_size": 358
+  },
+  "dataset": {
+    "origin": "processed_corpora",
+    "sources": {
+      "nigeria_fraud_sms": 1140,
+      "sms_spam": 5153
+    },
+    "n_scam": 1193,
+    "n_legit": 1193
+  },
+  "upgrade_path": "DistilBERT (serving/scam_transformer.py) - optional, needs torch"
+}

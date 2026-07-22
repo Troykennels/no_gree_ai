@@ -1,0 +1,113 @@
+{
+  "datasets": {
+    "nigeria_fraud_sms": {
+      "rows_raw": 1140,
+      "rows_processed": 1140,
+      "missing_values": 0,
+      "duplicates_removed": 0,
+      "outliers_removed": 0,
+      "class_distribution": {
+        "0": 600,
+        "1": 540
+      },
+      "class_balance_ratio": 0.9,
+      "positive_ratio": 0.4737,
+      "avg_token_count": 21.59,
+      "name": "Nigeria_Fraud_SMS",
+      "kind": "text",
+      "purpose": "Nigerian scam message detection",
+      "category_distribution": {
+        "Legit Promo": 60,
+        "BVN Scam": 60,
+        "Fake Debit Alert": 60,
+        "POS Scam": 60,
+        "Legit School": 60,
+        "Fake Credit Alert": 60,
+        "KYC Scam": 60,
+        "Legit Transaction Notice": 60,
+        "ATM Scam": 60,
+        "Legit Credit Alert": 60,
+        "Legit Bank Notice": 60,
+        "Fake Transfer": 60,
+        "Investment Scam": 60,
+        "Legit Debit Alert": 60,
+        "Employment Scam": 60,
+        "Legit Security Notice": 60,
+        "Legit OTP": 60,
+        "Legit Delivery": 60,
+        "Legit Personal": 60
+      },
+      "scam_ratio": 0.4737
+    },
+    "sms_spam": {
+      "rows_raw": 5574,
+      "rows_processed": 5153,
+      "missing_values": 0,
+      "duplicates_removed": 403,
+      "outliers_removed": 18,
+      "class_distribution": {
+        "0": 4500,
+        "1": 653
+      },
+      "class_balance_ratio": 0.145,
+      "positive_ratio": 0.1267,
+      "avg_token_count": 15.75,
+      "name": "SMS Spam Collection",
+      "kind": "text",
+      "purpose": "Scam / spam message detection",
+      "scam_ratio": 0.1267
+    },
+    "ieee_cis": {
+      "rows_raw": 590540,
+      "rows_processed": 590540,
+      "n_features": 422,
+      "missing_values": 115523073,
+      "missing_pct": 45.07,
+      "top_missing_columns": {
+        "id_24": 99.2,
+        "id_25": 99.13,
+        "id_07": 99.13,
+        "id_08": 99.13,
+        "id_21": 99.13,
+        "id_26": 99.13,
+        "id_27": 99.12,
+        "id_23": 99.12,
+        "id_22": 99.12,
+        "dist2": 93.63,
+        "D7": 93.41,
+        "id_18": 92.36,
+        "D13": 89.51,
+        "D14": 89.47,
+        "D12": 89.04
+      },
+      "high_missing_columns_dropped": 12,
+      "duplicates_removed": 0,
+      "outliers_clipped": 1581136,
+      "class_distribution": {
+        "0": 569877,
+        "1": 20663
+      },
+      "class_balance_ratio": 0.0363,
+      "positive_ratio": 0.035,
+      "imbalance_note": "Severe imbalance; use class weights or SMOTE at train time.",
+      "name": "IEEE-CIS Fraud Detection",
+      "kind": "tabular",
+      "purpose": "Transaction fraud detection",
+      "fraud_ratio": 0.035
+    }
+  },
+  "generated_charts": [
+    "charts/nigeria_class_distribution.png",
+    "charts/nigeria_scam_ratio.png",
+    "charts/nigeria_categories.png",
+    "charts/sms_spam_class_distribution.png",
+    "charts/sms_spam_ratio.png",
+    "charts/ieee_class_distribution.png",
+    "charts/ieee_missing.png",
+    "charts/overview_sizes.png"
+  ],
+  "summary": {
+    "total_datasets": 3,
+    "total_rows": 596833
+  }
+}
