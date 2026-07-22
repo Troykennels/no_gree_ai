@@ -22,6 +22,7 @@ def user_to_domain(row: UserModel) -> User:
         full_name=row.full_name,
         hashed_password=row.hashed_password,
         is_active=row.is_active,
+        role=row.role,
         created_at=row.created_at,
     )
 
@@ -33,6 +34,7 @@ def user_to_model(user: User) -> UserModel:
         full_name=user.full_name,
         hashed_password=user.hashed_password,
         is_active=user.is_active,
+        role=user.role,
     )
 
 

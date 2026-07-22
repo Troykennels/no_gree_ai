@@ -13,7 +13,11 @@ from slowapi.middleware import SlowAPIMiddleware
 
 from app.core.config import get_settings
 from app.core.database import init_dev_db
+from app.core.logging_config import configure_logging, get_logger
 from app.core.rate_limit import limiter
+
+configure_logging()
+_log = get_logger("securenaija.api")
 from app.infrastructure.automation.engine import AutomationEngine
 from app.interface.dependencies import (
     get_automation_engine,

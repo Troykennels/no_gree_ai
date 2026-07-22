@@ -59,7 +59,12 @@ class User:
     full_name: str
     hashed_password: str
     is_active: bool = True
+    role: str = "user"          # "user" | "admin"
     created_at: datetime | None = None
+
+    @property
+    def is_admin(self) -> bool:
+        return self.role == "admin"
 
 
 @dataclass

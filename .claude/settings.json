@@ -57,7 +57,22 @@
       "Bash(ml/.venv/Scripts/python.exe -m py_compile apps/api/app/core/rate_limit.py apps/api/app/interface/routes/health.py apps/api/app/interface/schemas.py ml/snaija_ml/data/training_data.py)",
       "Bash(git init *)",
       "Bash(grep -E \"node_modules|\\\\.venv|\\\\.next/|ml/data|\\\\.db$\")",
-      "Bash(git -c core.autocrlf=false commit -q -m ' *)"
+      "Bash(git -c core.autocrlf=false commit -q -m ' *)",
+      "Bash(curl -s -o /dev/null -w 'API /health -> HTTP %{http_code}\\\\n' --max-time 15 http://127.0.0.1:8000/api/v1/health)",
+      "Bash(curl -s http://127.0.0.1:8000/api/v1/health)",
+      "Bash(\"c:/Users/user/Desktop/SecureNaija AI/ml/.venv/Scripts/python.exe\" -c \"import sys,json;d=json.load\\(sys.stdin\\);print\\(' status:',d['status'],'| model_ready:',d['model_ready'],'| db_ready:',d['db_ready']\\)\")",
+      "Bash(curl -s -o /dev/null -w \"WEB /monitor -> HTTP %{http_code}\\\\n\" --max-time 120 \"http://localhost:3000/monitor\")",
+      "Bash(curl -s -o /dev/null -w \"WEB /login -> HTTP %{http_code}\\\\n\" --max-time 60 \"http://localhost:3000/login\")",
+      "Bash('c:/Users/user/Desktop/SecureNaija AI/ml/.venv/Scripts/python.exe' -c ' *)",
+      "Bash(ml/.venv/Scripts/python.exe -c \"import bcrypt; print\\(bcrypt.hashpw\\(b'securenaija-timing-equalizer', bcrypt.gensalt\\(12\\)\\).decode\\(\\)\\)\")",
+      "Bash(ml/.venv/Scripts/python.exe -m py_compile apps/api/app/domain/entities.py apps/api/app/infrastructure/db/models.py apps/api/app/infrastructure/db/mappers.py apps/api/app/interface/dependencies.py apps/api/app/interface/routes/admin.py apps/api/app/interface/routes/auth.py apps/api/app/application/use_cases/auth.py apps/api/app/interface/schemas.py apps/api/app/interface/error_handlers.py apps/api/app/core/logging_config.py apps/api/app/core/database.py apps/api/app/main.py apps/api/alembic/versions/0002_user_role.py)",
+      "Bash(rm -f securenaija_dev.db)",
+      "Bash(bash \"C:/Users/user/AppData/Local/Temp/claude/c--Users-user-Desktop-SecureNaija-AI/0190828e-9e28-4a6f-9f92-982e979a91f2/scratchpad/verify_rbac.sh\")",
+      "Bash(ml/.venv/Scripts/python.exe -m py_compile ml/snaija_ml/data/rebuild_ieee_raw.py ml/snaija_ml/data/preprocess.py)",
+      "PowerShell(Get-Process node,python -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, @{N='RAM_MB';E={[math]::Round\\($_.WorkingSet64/1MB\\)}}, StartTime | Sort-Object RAM_MB -Descending | Format-Table -AutoSize)",
+      "Bash(.venv/Scripts/python.exe -m snaija_ml.data.rebuild_ieee_raw --every 6)",
+      "Bash(ml/.venv/Scripts/python.exe -m py_compile apps/api/app/infrastructure/db/models.py apps/api/alembic/versions/0003_drop_redundant_scan_index.py)",
+      "Bash(ml/.venv/Scripts/python.exe \"C:/Users/user/AppData/Local/Temp/claude/c--Users-user-Desktop-SecureNaija-AI/0190828e-9e28-4a6f-9f92-982e979a91f2/scratchpad/verify_txn_serving.py\")"
     ]
   }
 }

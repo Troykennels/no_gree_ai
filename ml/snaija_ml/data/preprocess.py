@@ -210,12 +210,12 @@ def clean_tabular_dataset(df: pd.DataFrame, target_col: str) -> tuple[pd.DataFra
         outlier_cells += int(((df[c] < lo) | (df[c] > hi)).sum())
         df[c] = df[c].clip(lo, hi)
 
-    # Normalization -> standardize numeric features (z-score).
-    norm_cols = [c for c in numeric if c != target_col]
-    for c in norm_cols:
-        std = df[c].std()
-        if std and not np.isnan(std):
-            df[c] = (df[c] - df[c].mean()) / std
+    # NOTE: numeric features are intentionally NOT z-scored here. The transaction
+    # model is a tree ensemble (scale-invariant) served on RAW feature values, so
+    # standardizing the training parquet caused a train/serve skew (offline metrics
+    # looked great, production scored out-of-distribution). Keeping raw values means
+    # train == serve. (Any future linear model should scale inside its own pipeline,
+    # fit on the training fold only, so the scaler ships with the served model.)
 
     dist, balance_ratio, positive_ratio = {}, 0.0, 0.0
     if target_col in df.columns:

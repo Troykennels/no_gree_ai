@@ -14,7 +14,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.domain.entities import User
-from app.interface.dependencies import get_current_user
+from app.interface.dependencies import require_admin
 
 router = APIRouter(tags=["admin"], prefix="/admin")
 
@@ -29,7 +29,7 @@ def _report_path() -> Path:
 
 
 @router.get("/dataset-report")
-def dataset_report(_: Annotated[User, Depends(get_current_user)]) -> dict:
+def dataset_report(_: Annotated[User, Depends(require_admin)]) -> dict:
     path = _report_path()
     if not path.exists():
         raise HTTPException(

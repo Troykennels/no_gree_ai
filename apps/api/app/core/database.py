@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from collections.abc import Iterator
 
 from sqlalchemy import create_engine
@@ -16,11 +17,23 @@ settings = get_settings()
 _is_sqlite = settings.database_url.startswith("sqlite")
 _connect_args = {"check_same_thread": False} if _is_sqlite else {}
 
+# Explicit connection-pool tuning for PostgreSQL (recycle stale conns; bounded
+# pool so replicas don't exhaust Postgres max_connections). Not applicable to
+# SQLite, which uses a single-file connection.
+_pool_kwargs: dict[str, object] = {}
+if not _is_sqlite:
+    _pool_kwargs = {
+        "pool_size": int(os.getenv("DB_POOL_SIZE", "5")),
+        "max_overflow": int(os.getenv("DB_MAX_OVERFLOW", "10")),
+        "pool_recycle": 1800,
+    }
+
 engine = create_engine(
     settings.database_url,
     pool_pre_ping=True,
     future=True,
     connect_args=_connect_args,
+    **_pool_kwargs,
 )
 
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)

@@ -6,6 +6,7 @@ layers at once. Everything else stays decoupled.
 
 from __future__ import annotations
 
+import logging
 from functools import lru_cache
 from typing import Annotated
 from uuid import UUID
@@ -157,6 +158,16 @@ def get_current_user(
         )
     if not user.is_active:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inactive account")
+    return user
+
+
+def require_admin(user: Annotated[User, Depends(get_current_user)]) -> User:
+    """Requires an authenticated user with the admin role (RBAC)."""
+    if not user.is_admin:
+        logging.getLogger("securenaija.api").warning(
+            "rbac_denied user=%s role=%s", user.email, user.role)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
+    logging.getLogger("securenaija.api").info("admin_access user=%s", user.email)
     return user
 
 

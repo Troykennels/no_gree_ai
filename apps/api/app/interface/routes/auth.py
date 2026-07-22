@@ -4,9 +4,12 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+
+import jwt
 
 from app.application.use_cases.auth import AuthenticateUser, RegisterUser
+from app.core import security
 from app.core.rate_limit import limiter
 from app.domain.entities import User
 from app.interface.dependencies import (
@@ -16,6 +19,7 @@ from app.interface.dependencies import (
 )
 from app.interface.schemas import (
     LoginRequest,
+    RefreshRequest,
     RegisterRequest,
     TokenResponse,
     UserResponse,
@@ -50,6 +54,30 @@ def login(
         refresh_token=tokens.refresh_token,
         token_type=tokens.token_type,
     )
+
+
+@router.post("/refresh", response_model=TokenResponse)
+@limiter.limit("30/minute")
+def refresh(request: Request, payload: RefreshRequest) -> TokenResponse:
+    """Exchange a valid refresh token for a fresh access + refresh token pair."""
+    try:
+        claims = security.decode_token(payload.refresh_token)
+    except jwt.PyJWTError as exc:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid or expired refresh token") from exc
+    if claims.get("type") != security.REFRESH_TOKEN or "sub" not in claims:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Not a refresh token")
+    subject = claims["sub"]
+    return TokenResponse(
+        access_token=security.create_access_token(subject),
+        refresh_token=security.create_refresh_token(subject),
+    )
+
+
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+def logout(_: Annotated[User, Depends(get_current_user)]) -> None:
+    """Stateless logout: the client discards its tokens. (Full server-side
+    revocation needs a jti denylist in Redis — see the scaling notes.)"""
+    return None
 
 
 @router.get("/me", response_model=UserResponse)

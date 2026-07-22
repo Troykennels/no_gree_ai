@@ -303,6 +303,7 @@ def _parse_args() -> TrainingDataConfig:
     a = p.parse_args()
     return TrainingDataConfig(
         balance=not a.no_balance,
+        
         seed=a.seed,
         sources=tuple(a.sources) if a.sources else None,
     )

@@ -76,6 +76,18 @@ cd apps/web && npm run dev   # http://localhost:3000
 
 ---
 
+## Backups & data governance
+
+- **Database backups:** enable Railway PostgreSQL automated backups (dashboard →
+  database → Backups), or schedule `pg_dump` to object storage. Test a restore
+  before you rely on it.
+- **Feedback volume:** the `/data/feedback` volume holds continuous-learning
+  corrections (redacted text). Include it in backups if you retrain from it.
+- **PII / NDPR:** message text is PII-redacted (BVN/PIN/PAN/OTP masked) before it
+  is stored, streamed, or written to feedback — see `infrastructure/security/pii.py`.
+  Deleting a user cascades their `scans`. Set a retention policy (e.g. purge scans
+  older than N months) as a scheduled job; document your lawful basis.
+
 ## Scaling notes (multi-replica)
 
 Single instance works as-is. Before running **more than one** API replica:

@@ -29,6 +29,10 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
 
 
+class RefreshRequest(BaseModel):
+    refresh_token: str
+
+
 class UserResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -36,6 +40,7 @@ class UserResponse(BaseModel):
     email: EmailStr
     full_name: str
     is_active: bool
+    role: str = "user"
     created_at: datetime | None = None
 
 

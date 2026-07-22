@@ -177,7 +177,7 @@ export function IntelligenceConsole() {
                     {result.category} risk
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Fraud probability {result.overall_risk_score}% · Confidence{" "}
+                    Risk score {result.overall_risk_score}/100 · Confidence{" "}
                     {Math.round(result.confidence * 100)}%
                   </p>
                 </div>
@@ -201,8 +201,8 @@ export function IntelligenceConsole() {
                   </p>
                   {result.signals.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
-                      {result.signals.map((s) => (
-                        <span key={s.type}
+                      {result.signals.map((s, i) => (
+                        <span key={`${s.type}-${i}`}
                           className={cn("rounded-full border px-2.5 py-1 text-xs font-medium",
                             PRIORITY_UI[s.severity].card, PRIORITY_UI[s.severity].text)}>
                           {s.label}

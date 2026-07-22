@@ -15,6 +15,7 @@ horizontally). A snapshot repaints a fresh page; the event stream keeps it live.
 
 from __future__ import annotations
 
+import asyncio
 import uuid
 from collections import defaultdict, deque
 from datetime import datetime, timezone
@@ -92,7 +93,9 @@ class AutomationEngine:
 
     async def ingest_message(self, message: str, channel: str = "sms",
                              region: str | None = None) -> dict[str, Any]:
-        result = self._scam.detect(message)  # model scores the RAW text
+        # Offload the CPU-bound model call to a thread so it never blocks the
+        # event loop (SSE heartbeats / other requests). Scores the RAW text.
+        result = await asyncio.to_thread(self._scam.detect, message)
         is_threat = result.label in {"Scam", "Suspicious"}
         region = region or "Unknown"
 
@@ -133,7 +136,7 @@ class AutomationEngine:
                                  region: str | None = None,
                                  bank: str | None = None,
                                  payer: str | None = None) -> dict[str, Any]:
-        result = self._txn.score(features)
+        result = await asyncio.to_thread(self._txn.score, features)  # off the event loop
         is_threat = result.decision in {"decline", "review"}
         region = region or "Unknown"
         amount = float(features.get("TransactionAmt") or 0.0)  # Naira
@@ -179,8 +182,9 @@ class AutomationEngine:
         predicted = item.get("label") if item else None
         ok = False
         if text:  # only message feedback feeds the text model
-            ok = self._feedback.record(text=text, label=label,
-                                       predicted_label=predicted, item_id=item_id)
+            ok = await asyncio.to_thread(  # blocking CSV write off the event loop
+                self._feedback.record, text=text, label=label,
+                predicted_label=predicted, item_id=item_id)
         if item is not None:
             item["feedback"] = label
         for alert in self._alerts:

@@ -1,39 +1,39 @@
 {
   "models": {
     "xgboost": {
-      "accuracy": 0.918,
-      "precision": 0.4847,
-      "recall": 0.7489,
-      "f1": 0.5885,
-      "roc_auc": 0.9231,
-      "pr_auc": 0.6805,
+      "accuracy": 0.9301,
+      "precision": 0.2679,
+      "recall": 0.6233,
+      "f1": 0.3747,
+      "roc_auc": 0.8872,
+      "pr_auc": 0.4588,
       "confusion_matrix": [
         [
-          20623,
-          1497
+          17898,
+          1126
         ],
         [
-          472,
-          1408
+          249,
+          412
         ]
       ],
       "threshold": 0.5
     },
     "random_forest": {
-      "accuracy": 0.887,
-      "precision": 0.3861,
-      "recall": 0.7511,
-      "f1": 0.51,
-      "roc_auc": 0.9083,
-      "pr_auc": 0.634,
+      "accuracy": 0.8604,
+      "precision": 0.152,
+      "recall": 0.6899,
+      "f1": 0.2491,
+      "roc_auc": 0.8649,
+      "pr_auc": 0.4148,
       "confusion_matrix": [
         [
-          19875,
-          2245
+          16480,
+          2544
         ],
         [
-          468,
-          1412
+          205,
+          456
         ]
       ],
       "threshold": 0.5

@@ -65,3 +65,5 @@ Each new slice (phishing URL, fake POS alert) adds:
 4. a UI surface in the web app.
 
 The existing rings do not change — that is the point of the structure.
+
+
