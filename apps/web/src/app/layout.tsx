@@ -17,11 +17,11 @@ const sora = Sora({
 
 export const metadata: Metadata = {
   title: {
-    default: "SecureNaija — Stop fraud before money is lost",
+    default: "SecureNaija - Stop fraud before money is lost",
     template: "%s · SecureNaija",
   },
   description:
-    "AI-powered fraud intelligence that protects Nigerians from fake bank SMS, WhatsApp scams, POS fraud and fake loan offers — before money is lost.",
+    "AI-powered fraud intelligence that protects Nigerians from fake bank SMS, WhatsApp scams, POS fraud and fake loan offers - before money is lost.",
   keywords: [
     "Nigeria fraud detection",
     "fake bank SMS",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     "phishing",
   ],
   openGraph: {
-    title: "SecureNaija — Stop fraud before money is lost",
+    title: "SecureNaija - Stop fraud before money is lost",
     description:
       "Paste any suspicious message and get an instant AI fraud verdict with a clear explanation.",
     type: "website",

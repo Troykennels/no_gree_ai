@@ -11,7 +11,7 @@ function scoreColor(score: number): string {
   return "hsl(0 84% 60%)";
 }
 
-/** Auto-recalculated security score, 0–100, higher is safer. */
+/** Auto-recalculated security score, 0-100, higher is safer. */
 export function SecurityScore({ score, grade }: { score: number; grade: string }) {
   const size = 190;
   const stroke = 14;

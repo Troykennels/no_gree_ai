@@ -6,7 +6,7 @@ import { FraudDashboard } from "@/components/monitor/fraud-dashboard";
 export const metadata: Metadata = {
   title: "Fraud Intelligence Dashboard",
   description:
-    "A real-time fraud command center — security score, risk score, threat timeline, heatmap, analytics, recent messages and transactions, and live alerts, all updating automatically.",
+    "A real-time fraud command center - security score, risk score, threat timeline, heatmap, analytics, recent messages and transactions, and live alerts, all updating automatically.",
 };
 
 export default function MonitorPage() {

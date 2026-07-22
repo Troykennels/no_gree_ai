@@ -130,6 +130,15 @@ def load_training_frame(config: TrainingDataConfig | None = None) -> tuple[pd.Da
             frames.append(fb.assign(source="user_feedback"))
             per_source["user_feedback"] = len(fb)
 
+    # Hard negatives: generated legit Nigerian bank alerts, so genuine transaction
+    # alerts ("Transfer of NGN.. to NAME successful") are not flagged as scams.
+    if wanted is None or "legit_alerts" in wanted:
+        from .legit_alerts import legit_bank_alerts
+
+        alerts = legit_bank_alerts()
+        frames.append(pd.DataFrame({"text": alerts, "label": 0, "source": "legit_alerts"}))
+        per_source["legit_alerts"] = len(alerts)
+
     if not frames:
         # Fallback: synthetic generator (keeps the trainer runnable pre-pipeline).
         from ..pipelines.dataset import build_dataset

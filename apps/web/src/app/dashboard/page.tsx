@@ -4,14 +4,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { LogOut, ShieldAlert, ShieldCheck, ScanLine } from "lucide-react";
+import { LogOut, ShieldAlert, ShieldCheck, ScanLine, Download } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { api, ApiError, tokenStore } from "@/lib/api";
 import { riskTheme } from "@/lib/risk";
-import { cn, formatDate, formatPercent } from "@/lib/utils";
+import { cn, downloadCsv, formatDate, formatPercent } from "@/lib/utils";
 import { RiskDistributionChart } from "@/components/dashboard/risk-chart";
 
 export default function DashboardPage() {
@@ -45,6 +45,22 @@ export default function DashboardPage() {
     router.push("/");
   }
 
+  function exportCsv() {
+    downloadCsv(
+      `securenaija-scans-${new Date().toISOString().slice(0, 10)}.csv`,
+      scans.map((s) => ({
+        date: s.created_at,
+        channel: s.channel,
+        message: s.message,
+        fraud_probability: s.assessment.fraud_probability,
+        is_fraud: s.assessment.is_fraud,
+        risk_band: s.assessment.risk_band,
+        risk_label: s.assessment.risk_label,
+        verdict: s.assessment.verdict,
+      })),
+    );
+  }
+
   return (
     <div className="min-h-screen">
       <header className="border-b border-border/60 glass">
@@ -53,6 +69,9 @@ export default function DashboardPage() {
             <Logo />
           </Link>
           <div className="flex items-center gap-3">
+            <Button size="sm" variant="outline" onClick={exportCsv} disabled={scans.length === 0}>
+              <Download /> Download CSV
+            </Button>
             <Link href="/detector">
               <Button size="sm">
                 <ScanLine /> New scan

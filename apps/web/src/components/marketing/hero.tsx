@@ -40,7 +40,7 @@ export function Hero() {
           >
             Millions of Nigerians lose money to fake bank SMS, WhatsApp scams,
             POS fraud and fake loans every year. SecureNaija reads any suspicious
-            message and tells you if it&apos;s fraud — instantly, with reasons.
+            message and tells you if it&apos;s fraud - instantly, with reasons.
           </motion.p>
 
           <motion.div

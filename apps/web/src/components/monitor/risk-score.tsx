@@ -20,7 +20,7 @@ const TEXT_COLOR = [
   "text-success", "text-emerald-400", "text-warning", "text-orange-500", "text-danger",
 ];
 
-/** Live "fraud pressure" 0–100 with the 5 risk categories as a lit segment bar. */
+/** Live "fraud pressure" 0-100 with the 5 risk categories as a lit segment bar. */
 export function RiskScore({ score }: { score: number }) {
   const idx = categoryOf(score);
 

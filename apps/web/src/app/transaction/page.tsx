@@ -6,7 +6,7 @@ import { TransactionScorer } from "@/components/transaction/transaction-scorer";
 export const metadata: Metadata = {
   title: "Transaction Fraud Scoring",
   description:
-    "Score a card transaction for fraud with an XGBoost model trained on the IEEE-CIS dataset — decision, probability and SHAP explanation.",
+    "Score a card transaction for fraud with an XGBoost model trained on the IEEE-CIS dataset - decision, probability and SHAP explanation.",
 };
 
 export default function TransactionPage() {
@@ -24,7 +24,7 @@ export default function TransactionPage() {
             </h1>
             <p className="mt-3 text-muted-foreground">
               A gradient-boosted model trained and evaluated out-of-time on the
-              IEEE-CIS fraud dataset. Enter what you know — the rest is imputed —
+              IEEE-CIS fraud dataset. Enter what you know - the rest is imputed -
               and get an approve / review / decline decision with a SHAP
               explanation.
             </p>

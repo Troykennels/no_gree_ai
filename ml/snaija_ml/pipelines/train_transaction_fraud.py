@@ -60,6 +60,7 @@ from sklearn.metrics import (
     average_precision_score,
     confusion_matrix,
     f1_score,
+    precision_recall_curve,
     precision_score,
     recall_score,
     roc_auc_score,
@@ -216,6 +217,23 @@ def out_of_time_split(df: pd.DataFrame, test_frac: float = 0.2):
     return df_sorted.iloc[:cut], df_sorted.iloc[cut:]
 
 
+def pick_recall_weighted_threshold(y_true: np.ndarray, proba: np.ndarray,
+                                   beta: float = 2.0) -> float:
+    """F-beta-optimal decision threshold (beta=2 => recall-weighted, the right
+    bias for fraud: missing fraud costs more than a false alarm). Tuned on the
+    VALIDATION fold, never on test."""
+    precisions, recalls, thresholds = precision_recall_curve(y_true, proba)
+    best_t, best_f = 0.5, -1.0
+    for p, r, t in zip(precisions[:-1], recalls[:-1], thresholds):
+        denom = (beta**2 * p) + r
+        if denom == 0:
+            continue
+        f = (1 + beta**2) * (p * r) / denom
+        if f > best_f:
+            best_f, best_t = f, float(t)
+    return round(min(max(best_t, 0.10), 0.95), 4)
+
+
 def undersample_majority(X: np.ndarray, y: np.ndarray, ratio: int, seed: int):
     """Keep every fraud row + ``ratio`` x as many random legit rows."""
     rng = np.random.default_rng(seed)
@@ -268,43 +286,51 @@ def main(full: bool, sample_rows: int, recent_window: int,
     print(f"   features: {len(num_cols)} numeric, {len(cat_cols)} categorical")
 
     train_df, test_df = out_of_time_split(df)
-    print(f"-> Out-of-time split -> train={len(train_df):,}  test={len(test_df):,} "
-          f"(test fraud rate {test_df[TARGET].mean() * 100:.2f}%)")
+    # Carve a time-ordered validation slice from the tail of the training fold,
+    # used for early stopping AND honest threshold tuning (test is never touched).
+    fit_df, val_df = out_of_time_split(train_df, test_frac=0.15)
+    print(f"-> Out-of-time split -> fit={len(fit_df):,}  val={len(val_df):,}  "
+          f"test={len(test_df):,} (test fraud rate {test_df[TARGET].mean() * 100:.2f}%)")
 
-    y_train = train_df[TARGET].to_numpy()
+    y_fit = fit_df[TARGET].to_numpy()
+    y_val = val_df[TARGET].to_numpy()
     y_test = test_df[TARGET].to_numpy()
 
-    print("-> Fitting shared preprocessor on the training fold ...")
+    print("-> Fitting shared preprocessor on the fit fold only (no val/test leakage) ...")
     pre = build_preprocessor(num_cols, cat_cols)
-    X_train = pre.fit_transform(train_df).astype("float32")
+    X_fit = pre.fit_transform(fit_df).astype("float32")
+    X_val = pre.transform(val_df).astype("float32")
     X_test = pre.transform(test_df).astype("float32")
     feature_names = list(pre.get_feature_names_out())
-    del df, train_df, test_df
+    del df, train_df, fit_df, val_df, test_df
 
-    pos = int(y_train.sum())
-    neg = int((y_train == 0).sum())
+    pos = int(y_fit.sum())
+    neg = int((y_fit == 0).sum())
     scale_pos_weight = round(neg / max(pos, 1), 2)
 
-    # -- XGBoost --------------------------------------------------------------
-    n_estimators_xgb = 400 if full else 250
-    print(f"-> Training XGBoost ({n_estimators_xgb} trees, {n_jobs} threads) ...")
+    # -- XGBoost with early stopping on the validation fold -------------------
+    max_trees = 900 if full else 700
+    print(f"-> Training XGBoost (<= {max_trees} trees, early-stopping, {n_jobs} threads) ...")
     xgb_model = XGBClassifier(
-        n_estimators=n_estimators_xgb, max_depth=6, learning_rate=0.08,
+        n_estimators=max_trees, max_depth=6, learning_rate=0.05,
         subsample=0.8, colsample_bytree=0.8, reg_lambda=2.0,
         min_child_weight=3, gamma=0.5, objective="binary:logistic",
-        eval_metric="aucpr", tree_method="hist",
+        eval_metric="aucpr", tree_method="hist", early_stopping_rounds=40,
         scale_pos_weight=scale_pos_weight, n_jobs=n_jobs, random_state=SEED,
     )
-    xgb_model.fit(X_train, y_train)
+    xgb_model.fit(X_fit, y_fit, eval_set=[(X_val, y_val)], verbose=False)
+    best_it = getattr(xgb_model, "best_iteration", None)
+    print(f"   best iteration: {best_it if best_it is not None else max_trees}")
+    xgb_val = xgb_model.predict_proba(X_val)[:, 1]
     xgb_proba = xgb_model.predict_proba(X_test)[:, 1]
 
-    # -- RandomForest on a majority-undersampled view (tractable on a laptop) --
-    Xr, yr = undersample_majority(X_train, y_train, rf_ratio, SEED)
+    # -- RandomForest on a majority-undersampled view -------------------------
+    Xr, yr = undersample_majority(X_fit, y_fit, rf_ratio, SEED)
     if rf_sample and len(yr) > rf_sample:
         rng = np.random.default_rng(SEED)
         sel = rng.choice(len(yr), size=rf_sample, replace=False)
         Xr, yr = Xr[sel], yr[sel]
-    n_estimators_rf = 300 if full else 150
+    n_estimators_rf = 300 if full else 200
     print(f"-> Training RandomForest ({len(yr):,} rows, "
           f"{int(yr.sum()):,} fraud after undersampling, {n_estimators_rf} trees) ...")
     rf_model = RandomForestClassifier(
@@ -313,19 +339,25 @@ def main(full: bool, sample_rows: int, recent_window: int,
         n_jobs=n_jobs, random_state=SEED,
     )
     rf_model.fit(Xr, yr)
+    rf_val = rf_model.predict_proba(X_val)[:, 1]
     rf_proba = rf_model.predict_proba(X_test)[:, 1]
 
-    # -- Compare on the untouched out-of-time test fold -----------------------
-    print("\n-- Test-fold comparison (out-of-time) --------------------")
-    results = {
-        "xgboost": evaluate("xgboost", y_test, xgb_proba, DECISION_THRESHOLD),
-        "random_forest": evaluate("random_forest", y_test, rf_proba, DECISION_THRESHOLD),
-    }
-
-    # -- Pick the winner by PR-AUC (right metric for heavy imbalance) ---------
-    best_name = max(results, key=lambda k: results[k]["pr_auc"])
+    # -- Pick winner by PR-AUC (threshold-free), then tune its threshold on val
+    best_name = "xgboost" if average_precision_score(y_test, xgb_proba) >= \
+        average_precision_score(y_test, rf_proba) else "random_forest"
     best_model = xgb_model if best_name == "xgboost" else rf_model
-    print(f"\n[BEST] {best_name} (PR-AUC {results[best_name]['pr_auc']:.4f})")
+    best_val = xgb_val if best_name == "xgboost" else rf_val
+    tuned_threshold = pick_recall_weighted_threshold(y_val, best_val, beta=2.0)
+
+    print("\n-- Test-fold comparison (out-of-time, at tuned threshold) --------")
+    thr = {"xgboost": DECISION_THRESHOLD, "random_forest": DECISION_THRESHOLD}
+    thr[best_name] = tuned_threshold
+    results = {
+        "xgboost": evaluate("xgboost", y_test, xgb_proba, thr["xgboost"]),
+        "random_forest": evaluate("random_forest", y_test, rf_proba, thr["random_forest"]),
+    }
+    print(f"\n[BEST] {best_name} (PR-AUC {results[best_name]['pr_auc']:.4f})  "
+          f"recall-weighted threshold={tuned_threshold}")
 
     # -- SHAP explanation for the winner (native TreeSHAP if XGBoost) ---------
     if best_name == "xgboost":
@@ -362,20 +394,22 @@ def main(full: bool, sample_rows: int, recent_window: int,
         "candidates": list(results.keys()),
         "selection_metric": "pr_auc",
         "explain_method": explain_method,
-        "decision_threshold": DECISION_THRESHOLD,
+        "decision_threshold": tuned_threshold,
+        "threshold_objective": "F2 recall-weighted (tuned on validation fold)",
+        "best_iteration": int(best_it) if best_it is not None else max_trees,
         "scale_pos_weight": scale_pos_weight,
         "n_features": len(feature_names),
         "n_numeric": len(num_cols),
         "n_categorical": len(cat_cols),
-        "split": "out_of_time (80/20 by TransactionDT)",
+        "split": "out_of_time (fit/val/test by TransactionDT)",
         "training_profile": prov,
         "metrics": results[best_name],
         "all_metrics": results,
         "top_features": shap_top,
         "dataset": {
             "source": "IEEE-CIS Fraud Detection",
-            "rows": int(len(y_train) + len(y_test)),
-            "train_rows": int(len(y_train)),
+            "rows": int(len(y_fit) + len(y_val) + len(y_test)),
+            "train_rows": int(len(y_fit) + len(y_val)),
             "test_rows": int(len(y_test)),
             "fraud_rate_test": round(float(y_test.mean()), 4),
         },

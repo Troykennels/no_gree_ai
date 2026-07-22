@@ -95,7 +95,7 @@ export function LiveDataProvider({ children }: { children: React.ReactNode }) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(notifications.slice(0, MAX_HISTORY)));
     } catch {
-      /* quota / private mode — non-fatal */
+      /* quota / private mode - non-fatal */
     }
   }, [notifications]);
 
@@ -120,9 +120,9 @@ export function LiveDataProvider({ children }: { children: React.ReactNode }) {
     if (now - lastBrowserNotify.current < BROWSER_MIN_GAP_MS) return;
     lastBrowserNotify.current = now;
     try {
-      new Notification(`SecureNaija — ${n.title}`, { body: n.body, tag: n.source });
+      new Notification(`SecureNaija - ${n.title}`, { body: n.body, tag: n.source });
     } catch {
-      /* some browsers throw if not in a user gesture — ignore */
+      /* some browsers throw if not in a user gesture - ignore */
     }
   }, []);
 

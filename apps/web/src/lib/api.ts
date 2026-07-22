@@ -82,21 +82,21 @@ export const api = {
       true, // sends token if present so authed scans are saved
     ),
 
-  // Model 1 — Scam Detection (Safe / Suspicious / Scam + highlighted words)
+  // Model 1 - Scam Detection (Safe / Suspicious / Scam + highlighted words)
   detectScam: (message: string) =>
     request<ScamResult>("/scam/detect", {
       method: "POST",
       body: JSON.stringify({ message }),
     }),
 
-  // Model 2 — Transaction Fraud (send whatever fields you have; rest imputed)
+  // Model 2 - Transaction Fraud (send whatever fields you have; rest imputed)
   scoreTransaction: (features: Record<string, number | string | null>) =>
     request<TransactionResult>("/transaction/score", {
       method: "POST",
       body: JSON.stringify({ features }),
     }),
 
-  // Fraud Intelligence — fuse both models into one 0-100 score + AI actions
+  // Fraud Intelligence - fuse both models into one 0-100 score + AI actions
   assessIntelligence: (
     message: string | null,
     transactionFeatures?: Record<string, number | string | null> | null,

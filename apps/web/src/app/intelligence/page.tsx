@@ -6,7 +6,7 @@ import { IntelligenceConsole } from "@/components/intelligence/intelligence-cons
 export const metadata: Metadata = {
   title: "Fraud Intelligence",
   description:
-    "Combine scam detection and transaction fraud into one 0–100 risk score, a category, and instant AI recommendations you can act on.",
+    "Combine scam detection and transaction fraud into one 0-100 risk score, a category, and instant AI recommendations you can act on.",
 };
 
 export default function IntelligencePage() {
@@ -23,8 +23,8 @@ export default function IntelligencePage() {
               One score. One clear plan.
             </h1>
             <p className="mt-3 text-muted-foreground">
-              We fuse the scam and transaction-fraud models into a single 0–100 risk
-              score, a category from Safe to Critical, and instant AI recommendations —
+              We fuse the scam and transaction-fraud models into a single 0-100 risk
+              score, a category from Safe to Critical, and instant AI recommendations -
               exactly what to do next.
             </p>
           </div>

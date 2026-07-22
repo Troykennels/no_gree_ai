@@ -77,7 +77,10 @@
       "Bash(curl -s -o /dev/null -w '  POST /auth/register -> HTTP %{http_code}\\\\n' -X POST http://127.0.0.1:8000/api/v1/auth/register -H 'Content-Type: application/json' -d '{\"email\":\"__TRACKED_VAR__\",\"full_name\":\"Link Test\",\"password\":\"StrongPass123!\"}')",
       "Bash(curl -s -o /dev/null -w \"  OPTIONS preflight -> HTTP %{http_code}\\\\n\" -X OPTIONS http://127.0.0.1:8000/api/v1/auth/register -H \"Origin: http://localhost:3000\" -H \"Access-Control-Request-Method: POST\" -H \"Access-Control-Request-Headers: content-type\")",
       "Bash(ml/.venv/Scripts/python.exe -m py_compile apps/api/app/core/config.py apps/api/app/application/use_cases/auth.py apps/api/app/interface/dependencies.py apps/api/app/core/database.py apps/api/app/main.py)",
-      "Bash(DATABASE_URL=\"sqlite:///C:/Users/user/Desktop/SecureNaija AI/apps/api/securenaija_dev.db\" MODEL_REGISTRY_DIR=\"C:/Users/user/Desktop/SecureNaija AI/ml/models\" API_ENV=development CORS_ORIGINS=\"http://localhost:3000\" ADMIN_EMAILS=\"admin@securenaija.ng\" ../../ml/.venv/Scripts/python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000)"
+      "Bash(DATABASE_URL=\"sqlite:///C:/Users/user/Desktop/SecureNaija AI/apps/api/securenaija_dev.db\" MODEL_REGISTRY_DIR=\"C:/Users/user/Desktop/SecureNaija AI/ml/models\" API_ENV=development CORS_ORIGINS=\"http://localhost:3000\" ADMIN_EMAILS=\"admin@securenaija.ng\" ../../ml/.venv/Scripts/python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000)",
+      "Bash(ml/.venv/Scripts/python.exe \"C:/Users/user/AppData/Local/Temp/claude/c--Users-user-Desktop-SecureNaija-AI/0190828e-9e28-4a6f-9f92-982e979a91f2/scratchpad/ml_audit.py\")",
+      "Bash(.venv/Scripts/python.exe -m snaija_ml.data.rebuild_ieee_raw --every 4)",
+      "Bash(.venv/Scripts/python.exe -m snaija_ml.pipelines.train_transaction_fraud --sample-rows 0 --recent-window 0 --n-jobs 2)"
     ]
   }
 }

@@ -219,7 +219,7 @@ export function IntelligenceConsole() {
               <div className="rounded-2xl border border-border bg-card p-5">
                 <div className="mb-3 flex items-center gap-2">
                   <AlertTriangle className="size-4 text-primary" />
-                  <h2 className="font-semibold">Why — reasons</h2>
+                  <h2 className="font-semibold">Why - reasons</h2>
                 </div>
                 {result.reasons.length > 0 ? (
                   <ul className="space-y-2">
@@ -235,7 +235,7 @@ export function IntelligenceConsole() {
                   </ul>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    No specific red flags — nothing stood out as fraudulent.
+                    No specific red flags - nothing stood out as fraudulent.
                   </p>
                 )}
               </div>
@@ -294,7 +294,7 @@ export function IntelligenceConsole() {
             className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-border/70 py-10 text-sm text-muted-foreground"
           >
             <Sparkles className="size-4 text-primary" />
-            One fused 0–100 score, a risk category, and instant actions will appear here.
+            One fused 0-100 score, a risk category, and instant actions will appear here.
           </motion.div>
         )}
       </AnimatePresence>

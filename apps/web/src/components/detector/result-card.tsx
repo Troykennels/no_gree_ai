@@ -63,7 +63,7 @@ export function ResultCard({ assessment }: { assessment: Assessment }) {
           {assessment.factors.length > 0 && (
             <div className="space-y-2.5">
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Why — top signals
+                Why - top signals
               </p>
               {assessment.factors.map((f, i) => {
                 const isFraud = f.signal === "fraud";

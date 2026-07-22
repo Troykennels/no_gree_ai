@@ -6,7 +6,7 @@ import { ScamAnalyzer } from "@/components/scam/scam-analyzer";
 export const metadata: Metadata = {
   title: "Scam Detector",
   description:
-    "AI scam detection for messages — Safe, Suspicious or Scam, with the exact suspicious words highlighted and a plain-English explanation.",
+    "AI scam detection for messages - Safe, Suspicious or Scam, with the exact suspicious words highlighted and a plain-English explanation.",
 };
 
 export default function ScamPage() {
@@ -24,7 +24,7 @@ export default function ScamPage() {
             </h1>
             <p className="mt-3 text-muted-foreground">
               Paste any message. Our TF-IDF + Logistic Regression model returns a
-              three-way verdict, the words that triggered it, and why — in plain
+              three-way verdict, the words that triggered it, and why - in plain
               English.
             </p>
           </div>

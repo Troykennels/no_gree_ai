@@ -42,7 +42,7 @@ export function ProblemSection() {
           </h2>
           <p className="mt-4 text-muted-foreground">
             Today&apos;s systems flag fraud <em>after</em> the money is gone.
-            SecureNaija flips that — catching the scam at the moment it lands in
+            SecureNaija flips that - catching the scam at the moment it lands in
             your inbox.
           </p>
         </motion.div>
@@ -82,7 +82,7 @@ const STEPS = [
   {
     icon: ScanSearch,
     title: "Get an explained verdict",
-    body: "See a clear risk score and the exact signals that raised — or lowered — the risk.",
+    body: "See a clear risk score and the exact signals that raised - or lowered - the risk.",
   },
 ];
 
@@ -126,7 +126,7 @@ const FEATURES = [
   {
     icon: BrainCircuit,
     title: "Explainable AI",
-    body: "Every verdict comes with the exact signals behind it — powered by SHAP, not a black box.",
+    body: "Every verdict comes with the exact signals behind it - powered by SHAP, not a black box.",
   },
   {
     icon: ShieldCheck,
@@ -197,7 +197,7 @@ export function TrustSection() {
             </motion.h2>
             <motion.p {...fadeUp} className="mt-4 text-muted-foreground">
               From a student checking a scholarship SMS to a bank screening
-              millions of messages — SecureNaija scales with you.
+              millions of messages - SecureNaija scales with you.
             </motion.p>
           </div>
 

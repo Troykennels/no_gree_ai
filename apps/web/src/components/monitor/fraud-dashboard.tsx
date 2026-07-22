@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, MotionConfig } from "framer-motion";
 import {
   Activity, Play, Square, FileText, Sparkles, Bell, MessageSquare,
-  CreditCard, ShieldAlert, PieChart, TrendingUp, MapPin,
+  CreditCard, ShieldAlert, PieChart, TrendingUp, MapPin, Download,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { useLiveData } from "@/lib/live-provider";
@@ -12,7 +12,7 @@ import type { EngineAlert } from "@/lib/types";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn, downloadCsv } from "@/lib/utils";
 import { SecurityScore } from "./security-score";
 import { RiskScore } from "./risk-score";
 import { StatTiles } from "./stat-tiles";
@@ -74,6 +74,25 @@ export function FraudDashboard() {
     try { await api.sendFeedback(alert.ref_id, label); } catch { /* SSE reconciles */ }
   };
 
+  const exportCsv = () => {
+    if (!state) return;
+    const rows = [
+      ...state.recent_messages.map((m) => ({
+        type: "message", label: m.label, probability: m.probability,
+        region: m.region, detail: m.text, ts: m.ts,
+      })),
+      ...state.recent_transactions.map((t) => ({
+        type: "transaction", label: t.decision, probability: t.probability,
+        region: t.region, detail: `${t.bank ?? ""} NGN${Math.round(t.amount)}`.trim(), ts: t.ts,
+      })),
+      ...state.alerts.map((a) => ({
+        type: `alert:${a.kind}`, label: a.severity, probability: a.probability,
+        region: a.region, detail: a.title, ts: a.ts,
+      })),
+    ];
+    downloadCsv(`securenaija-live-${new Date().toISOString().slice(0, 10)}.csv`, rows);
+  };
+
   const s = state;
 
   return (
@@ -98,12 +117,17 @@ export function FraudDashboard() {
                 <span className={cn("relative inline-flex size-2 rounded-full",
                   connected ? "bg-success" : "bg-muted-foreground")} />
               </span>
-              {connected ? "Live — updating automatically" : "Connecting…"}
+              {connected ? "Live - updating automatically" : "Connecting…"}
             </span>
             {s ? <span className="text-muted-foreground/70">· {s.live_subscribers} watching</span> : null}
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={exportCsv}
+            disabled={!s || (s.recent_messages.length + s.recent_transactions.length + s.alerts.length === 0)}
+            aria-label="Download live data as CSV">
+            <Download /> Download CSV
+          </Button>
           {simRunning ? (
             <Button variant="outline" size="sm" onClick={stopDemo} disabled={busy}
               aria-label="Stop live demo">
@@ -206,7 +230,7 @@ export function FraudDashboard() {
           className="mt-4 rounded-xl border border-dashed border-border/70 py-4 text-center text-sm text-muted-foreground"
         >
           Press <span className="font-medium text-foreground">Start live demo</span> to watch the
-          engine score messages and transactions in real time — nothing here needs a refresh.
+          engine score messages and transactions in real time - nothing here needs a refresh.
         </motion.p>
       ) : null}
     </MotionConfig>
