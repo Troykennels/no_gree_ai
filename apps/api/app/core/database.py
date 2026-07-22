@@ -60,3 +60,20 @@ def init_dev_db() -> None:
     from app.infrastructure.db import models  # noqa: F401 - registers metadata
 
     Base.metadata.create_all(bind=engine)
+
+
+def promote_configured_admins() -> None:
+    """Grant the admin role to any existing users whose email is in ADMIN_EMAILS,
+    so admins can be provisioned declaratively (idempotent, safe to run each boot)."""
+    emails = settings.admin_email_list
+    if not emails:
+        return
+    from app.infrastructure.db.models import UserModel
+
+    try:
+        with SessionLocal() as session:
+            session.query(UserModel).filter(UserModel.email.in_(emails)).update(
+                {UserModel.role: "admin"}, synchronize_session=False)
+            session.commit()
+    except Exception:  # noqa: BLE001 - never block startup on this
+        pass

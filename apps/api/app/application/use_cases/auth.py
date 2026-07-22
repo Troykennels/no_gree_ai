@@ -26,9 +26,11 @@ class AuthTokens:
 
 
 class RegisterUser:
-    def __init__(self, users: UserRepository, hasher: PasswordHasher) -> None:
+    def __init__(self, users: UserRepository, hasher: PasswordHasher,
+                 admin_emails: tuple[str, ...] = ()) -> None:
         self._users = users
         self._hasher = hasher
+        self._admin_emails = {e.strip().lower() for e in admin_emails}
 
     def execute(self, email: str, full_name: str, password: str) -> User:
         email = email.strip().lower()
@@ -40,6 +42,7 @@ class RegisterUser:
             full_name=full_name.strip(),
             hashed_password=self._hasher.hash(password),
             is_active=True,
+            role="admin" if email in self._admin_emails else "user",
         )
         return self._users.add(user)
 

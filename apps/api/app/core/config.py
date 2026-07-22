@@ -38,9 +38,17 @@ class Settings(BaseSettings):
     # ML
     model_registry_dir: str | None = Field(default=None, alias="MODEL_REGISTRY_DIR")
 
+    # RBAC: comma-separated emails that are granted the admin role automatically
+    # (on registration and at startup). Everyone else is a normal user.
+    admin_emails: str = Field(default="", alias="ADMIN_EMAILS")
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+
+    @property
+    def admin_email_list(self) -> list[str]:
+        return [e.strip().lower() for e in self.admin_emails.split(",") if e.strip()]
 
     @property
     def is_production(self) -> bool:

@@ -12,7 +12,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
 from app.core.config import get_settings
-from app.core.database import init_dev_db
+from app.core.database import init_dev_db, promote_configured_admins
 from app.core.logging_config import configure_logging, get_logger
 from app.core.rate_limit import limiter
 
@@ -63,6 +63,8 @@ async def _automation_scheduler(auto_engine: AutomationEngine) -> None:
 async def lifespan(_: FastAPI):
     # Local dev on SQLite: ensure tables exist (production/Railway uses Alembic).
     init_dev_db()
+    # Grant the admin role to any ADMIN_EMAILS accounts (declarative RBAC bootstrap).
+    promote_configured_admins()
 
     # Warm every model singleton at startup so the first user request is fast
     # instead of paying the joblib/XGBoost load cost mid-demo. Load failures are

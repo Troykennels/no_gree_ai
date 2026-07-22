@@ -96,7 +96,11 @@ def get_scan_repository(session: Annotated[Session, Depends(get_session)]) -> Sq
 def get_register_user(
     users: Annotated[SqlAlchemyUserRepository, Depends(get_user_repository)],
 ) -> RegisterUser:
-    return RegisterUser(users=users, hasher=BcryptPasswordHasher())
+    return RegisterUser(
+        users=users,
+        hasher=BcryptPasswordHasher(),
+        admin_emails=tuple(get_settings().admin_email_list),
+    )
 
 
 def get_authenticate_user(
