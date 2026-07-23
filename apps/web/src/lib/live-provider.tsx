@@ -5,6 +5,7 @@ import {
 } from "react";
 import { usePathname } from "next/navigation";
 import { api, automationStreamUrl } from "./api";
+import { makeDemoState } from "./demo-data";
 import type { AutomationState, NotificationPriority, StreamEvent } from "./types";
 
 // Routes that consume live fraud data. Marketing ("/"), "/login" and "/register"
@@ -33,6 +34,8 @@ export interface ToastItem {
 interface LiveContextValue {
   state: AutomationState | null;
   connected: boolean;
+  demo: boolean;
+  setDemo: (on: boolean) => void;
   notifications: AppNotification[];
   unreadCount: number;
   toasts: ToastItem[];
@@ -66,6 +69,13 @@ function uid(): string {
 export function LiveDataProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AutomationState | null>(null);
   const [connected, setConnected] = useState(false);
+  // Client-side demo: local to this browser only, so it never affects other users.
+  const [demo, setDemoFlag] = useState(false);
+  const [demoSnapshot, setDemoSnapshot] = useState<AutomationState | null>(null);
+  const setDemo = useCallback((on: boolean) => {
+    setDemoFlag(on);
+    setDemoSnapshot(on ? makeDemoState() : null);
+  }, []);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [permission, setPermission] = useState<NotificationPermission | "unsupported">("unsupported");
@@ -216,9 +226,10 @@ export function LiveDataProvider({ children }: { children: React.ReactNode }) {
   const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
 
   const value = useMemo<LiveContextValue>(() => ({
-    state, connected, notifications, unreadCount, toasts, permission,
+    state: demo ? demoSnapshot : state,
+    connected, demo, setDemo, notifications, unreadCount, toasts, permission,
     requestBrowserPermission, markAllRead, markRead, clearAll, dismissToast,
-  }), [state, connected, notifications, unreadCount, toasts, permission,
+  }), [state, demo, demoSnapshot, setDemo, connected, notifications, unreadCount, toasts, permission,
       requestBrowserPermission, markAllRead, markRead, clearAll, dismissToast]);
 
   return <LiveContext.Provider value={value}>{children}</LiveContext.Provider>;

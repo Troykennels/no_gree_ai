@@ -37,7 +37,7 @@ function timeAgo(ts: string): string {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { state, connected } = useLiveData();
+  const { state, connected, demo, setDemo } = useLiveData();
 
   const meQuery = useQuery({ queryKey: ["me"], queryFn: api.me, retry: false });
 
@@ -82,6 +82,15 @@ export default function DashboardPage() {
           </Link>
         </div>
       </div>
+
+      {demo && (
+        <div className="card pad" style={{ marginBottom: 18, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, background: "var(--med-t)", borderColor: "var(--med)" }}>
+          <span style={{ color: "var(--med)", fontWeight: 600, fontSize: 13 }}>
+            Demo mode - showing sample data. Only you see this; it does not affect other accounts.
+          </span>
+          <button className="head-btn" onClick={() => setDemo(false)}>Exit demo</button>
+        </div>
+      )}
 
       {!state ? (
         <DashboardSkeleton />

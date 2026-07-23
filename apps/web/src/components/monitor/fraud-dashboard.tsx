@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion, MotionConfig } from "framer-motion";
 import {
   Activity, Play, Square, FileText, Bell, MessageSquare,
@@ -54,22 +53,11 @@ function Section({
 }
 
 export function FraudDashboard() {
-  const [simRunning, setSimRunning] = useState(false);
-  const [busy, setBusy] = useState(false);
+  // State + demo toggle come from the app-wide live provider. The demo is
+  // client-side only, so switching it on or off never affects any other user;
+  // exiting the demo instantly returns to the real (default) live state.
+  const { state, connected, demo, setDemo } = useLiveData();
 
-  // State + notifications come from the app-wide live provider (single SSE);
-  // toasts and the notification center are handled globally.
-  const { state, connected } = useLiveData();
-
-  const startDemo = async () => {
-    setBusy(true);
-    try { await api.simulate(60, 800); setSimRunning(true); } catch { /* badge shows status */ }
-    finally { setBusy(false); }
-  };
-  const stopDemo = async () => {
-    setBusy(true);
-    try { await api.simulateStop(); } finally { setSimRunning(false); setBusy(false); }
-  };
   const sendFeedback = async (alert: EngineAlert, label: "Safe" | "Scam") => {
     try { await api.sendFeedback(alert.ref_id, label); } catch { /* SSE reconciles */ }
   };
@@ -99,23 +87,24 @@ export function FraudDashboard() {
     <MotionConfig reducedMotion="user">
       {/* Control bar */}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <span className="livebadge" role="status" aria-live="polite">
-          <span className={cn("dot-live", !connected && "opacity-60")} />
-          <span>{connected ? "Live - updating automatically" : "Connecting…"}</span>
-          {s ? <span style={{ opacity: 0.7 }}>· {s.live_subscribers} watching</span> : null}
+        <span className="livebadge" role="status" aria-live="polite"
+          style={demo ? { background: "var(--med-t)", color: "var(--med)" } : undefined}>
+          <span className={cn("dot-live", !connected && !demo && "opacity-60")} />
+          <span>{demo ? "Demo mode - sample data (only you see this)" : connected ? "Live - updating automatically" : "Connecting…"}</span>
+          {s && !demo ? <span style={{ opacity: 0.7 }}>· {s.live_subscribers} watching</span> : null}
         </span>
         <div style={{ display: "flex", gap: 10 }}>
           <button className="head-btn" onClick={exportCsv}
             disabled={!s || (s.recent_messages.length + s.recent_transactions.length + s.alerts.length === 0)}
-            aria-label="Download live data as CSV">
+            aria-label="Download data as CSV">
             <Download /> Download CSV
           </button>
-          {simRunning ? (
-            <button className="head-btn" onClick={stopDemo} disabled={busy} aria-label="Stop live demo">
-              <Square /> Stop demo
+          {demo ? (
+            <button className="head-btn" onClick={() => setDemo(false)} aria-label="Exit demo, back to live">
+              <Square /> Exit demo
             </button>
           ) : (
-            <button className="head-btn primary" onClick={startDemo} disabled={busy} aria-label="Start live demo">
+            <button className="head-btn primary" onClick={() => setDemo(true)} aria-label="Start demo">
               <Play /> Start live demo
             </button>
           )}
@@ -205,13 +194,13 @@ export function FraudDashboard() {
         </motion.div>
       </motion.div>
 
-      {!simRunning && s && s.stats.messages_scanned === 0 ? (
+      {!demo && s && s.stats.messages_scanned === 0 ? (
         <motion.p
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           className="mt-4 rounded-xl border border-dashed border-border/70 py-4 text-center text-sm text-muted-foreground"
         >
-          Press <span className="font-medium text-foreground">Start live demo</span> to watch the
-          engine score messages and transactions in real time - nothing here needs a refresh.
+          Press <span className="font-medium text-foreground">Start live demo</span> to preview the
+          engine with sample data. It is only visible to you and does not affect other accounts.
         </motion.p>
       ) : null}
     </MotionConfig>
