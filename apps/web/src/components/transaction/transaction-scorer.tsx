@@ -96,7 +96,7 @@ export function TransactionScorer() {
     ingest.reset();
     setRegion(p.region);
     setForm({ ...EMPTY, ...p.values });
-    // Instant score on preset — feels automated.
+    // Instant score on preset - feels automated.
     setTimeout(() => scoreRef.current(), 30);
   };
 
@@ -172,7 +172,7 @@ export function TransactionScorer() {
 
         <div style={{ marginTop: 18, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
           <p style={{ fontSize: 12, color: "var(--muted-hex)", display: "inline-flex", alignItems: "center", gap: 6 }}>
-            {autoScore ? <><Radio style={{ width: 13, height: 13, color: "var(--brand-600)" }} /> Auto-scoring live — blank fields are imputed by the model.</> : "Any field left blank is imputed by the model."}
+            {autoScore ? <><Radio style={{ width: 13, height: 13, color: "var(--brand-600)" }} /> Auto-scoring live - blank fields are imputed by the model.</> : "Any field left blank is imputed by the model."}
           </p>
           <button className="head-btn primary" onClick={() => mutation.mutate()} disabled={mutation.isPending}>
             {mutation.isPending ? <><Loader2 className="animate-spin" /> Scoring…</> : <><CreditCard /> Score transaction</>}
@@ -208,7 +208,7 @@ export function TransactionScorer() {
 
             {result.factors.length > 0 && (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted-hex)" }}>Why — top reasons (SHAP)</p>
+                <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted-hex)" }}>Why - top reasons (SHAP)</p>
                 {result.factors.map((f, i) => {
                   const isFraud = f.signal === "fraud";
                   const c = isFraud ? "var(--crit)" : "var(--safe)";
@@ -232,7 +232,7 @@ export function TransactionScorer() {
               <p style={{ fontSize: 12, color: "var(--muted-hex)" }}>
                 {ingest.isSuccess
                   ? <span style={{ color: "var(--safe)", fontWeight: 600 }}>✓ Streamed to the live engine.</span>
-                  : "Feed this into automated monitoring — it updates the security score, heatmap and alerts in real time."}
+                  : "Feed this into automated monitoring - it updates the security score, heatmap and alerts in real time."}
               </p>
               {ingest.isSuccess ? (
                 <Link href="/monitor" className="head-btn"><Radio /> View on live monitor</Link>

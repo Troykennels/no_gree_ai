@@ -71,7 +71,7 @@ export default function DashboardPage() {
       <div className="page-head">
         <div>
           <h1>{firstName ? `Welcome back, ${firstName}` : "Fraud Intelligence"}</h1>
-          <p>Your live fraud picture — updated in real time as messages and transactions are scored.</p>
+          <p>Your live fraud picture - updated in real time as messages and transactions are scored.</p>
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <button className="head-btn" onClick={exportCsv} disabled={!state?.recent_transactions?.length}>
@@ -191,7 +191,7 @@ export default function DashboardPage() {
       )}
 
       <p className="footnote">
-        No_Gree AI · Detect. Protect. Prevent. — {connected ? "Live protection active" : "Reconnecting to live feed…"}
+        No_Gree AI · Detect. Protect. Prevent. - {connected ? "Live protection active" : "Reconnecting to live feed…"}
       </p>
     </AppShell>
   );

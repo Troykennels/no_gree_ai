@@ -12,17 +12,17 @@ export const metadata: Metadata = {
 
 const STEPS = [
   "Paste any suspicious SMS, WhatsApp message, loan or POS alert.",
-  "A TF-IDF + Logistic Regression model returns a three-way verdict — Safe, Suspicious or Scam — with a scam probability and confidence.",
-  "Exact linear contributions highlight the words that triggered the verdict, so you can see why it was flagged — not just that it was.",
+  "A TF-IDF + Logistic Regression model returns a three-way verdict - Safe, Suspicious or Scam - with a scam probability and confidence.",
+  "Exact linear contributions highlight the words that triggered the verdict, so you can see why it was flagged - not just that it was.",
   "A plain-English explanation tells you what the message is doing and what to do next.",
 ];
 
 const ADVANTAGES = [
-  "Instant (<1s) and runs offline — no LLM API calls, so it is cheap, private and always available.",
+  "Instant (<1s) and runs offline - no LLM API calls, so it is cheap, private and always available.",
   "Explainable: it highlights the exact trigger words instead of returning an opaque yes/no.",
   "Nigeria-tuned: trained on real Nigerian fraud SMS alongside UCI spam, so it knows local scam patterns (fake BVN blocks, palliatives, instant loans).",
   "Three-way verdict: borderline messages are surfaced as Suspicious rather than wrongly cleared.",
-  "Free for citizens and a drop-in API for banks — the same model powers both.",
+  "Free for citizens and a drop-in API for banks - the same model powers both.",
 ];
 
 export default function ScamPage() {
@@ -32,7 +32,7 @@ export default function ScamPage() {
         <PageHeader
           eyebrow="Model 1 · Scam Detection"
           title="Safe, Suspicious, or Scam?"
-          description="Paste any message. Our TF-IDF + Logistic Regression model returns a three-way verdict, the words that triggered it, and why — in plain English."
+          description="Paste any message. Our TF-IDF + Logistic Regression model returns a three-way verdict, the words that triggered it, and why - in plain English."
         />
         <ScamAnalyzer />
         <HowItWorks steps={STEPS} advantages={ADVANTAGES} />

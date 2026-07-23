@@ -11,16 +11,16 @@ export const metadata: Metadata = {
 };
 
 const STEPS = [
-  "Enter what you know about the transaction — amount, card network, product, purchaser email — or pick a preset. Any field you leave blank is imputed exactly as it was in training.",
+  "Enter what you know about the transaction - amount, card network, product, purchaser email - or pick a preset. Any field you leave blank is imputed exactly as it was in training.",
   "An XGBoost model (trained and tested out-of-time on the IEEE-CIS dataset) returns a calibrated fraud probability and an approve / review / decline decision.",
-  "TreeSHAP explains the decision per-transaction — which signals raised risk and which lowered it — so there is no black box.",
-  "Push it to the live engine and the transaction is scored, alerted, and folded into the security score, heatmap and alerts automatically — in real time, no refresh.",
+  "TreeSHAP explains the decision per-transaction - which signals raised risk and which lowered it - so there is no black box.",
+  "Push it to the live engine and the transaction is scored, alerted, and folded into the security score, heatmap and alerts automatically - in real time, no refresh.",
 ];
 
 const ADVANTAGES = [
-  "Effective: the model is chosen by PR-AUC — the right metric at a ~3.5% fraud base rate — and validated out-of-time, so it never learns from the future.",
+  "Effective: the model is chosen by PR-AUC - the right metric at a ~3.5% fraud base rate - and validated out-of-time, so it never learns from the future.",
   "Explainable: every decision ships with signed SHAP reasons, which regulators and risk teams can audit.",
-  "Automated: auto-scores as you type and streams straight into always-on monitoring — one scored transaction updates the whole command center.",
+  "Automated: auto-scores as you type and streams straight into always-on monitoring - one scored transaction updates the whole command center.",
   "Flexible: send only the fields you have; the rest are imputed, so partial data still returns a calibrated score.",
   "Actionable: approve / review / decline maps directly onto a bank or fintech's decisioning workflow.",
 ];
@@ -32,7 +32,7 @@ export default function TransactionPage() {
         <PageHeader
           eyebrow="Model 2 · Transaction Fraud"
           title="Score a card transaction"
-          description="A gradient-boosted model trained and evaluated out-of-time on the IEEE-CIS fraud dataset. Enter what you know — the rest is imputed — and get an approve / review / decline decision with a SHAP explanation. Turn on Auto-score for live scoring, then push it into the automation engine."
+          description="A gradient-boosted model trained and evaluated out-of-time on the IEEE-CIS fraud dataset. Enter what you know - the rest is imputed - and get an approve / review / decline decision with a SHAP explanation. Turn on Auto-score for live scoring, then push it into the automation engine."
         />
         <TransactionScorer />
         <HowItWorks steps={STEPS} advantages={ADVANTAGES} />

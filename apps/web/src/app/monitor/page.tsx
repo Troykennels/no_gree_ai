@@ -15,7 +15,7 @@ export default function MonitorPage() {
       <PageHeader
         eyebrow="Live"
         title="Fraud Command Center"
-        description="Real-time security score, threat timeline, heatmap, analytics and live alerts — all updating automatically."
+        description="Real-time security score, threat timeline, heatmap, analytics and live alerts - all updating automatically."
       />
       <FraudDashboard />
     </AppShell>

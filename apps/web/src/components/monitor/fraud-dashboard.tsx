@@ -101,7 +101,7 @@ export function FraudDashboard() {
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <span className="livebadge" role="status" aria-live="polite">
           <span className={cn("dot-live", !connected && "opacity-60")} />
-          <span>{connected ? "Live — updating automatically" : "Connecting…"}</span>
+          <span>{connected ? "Live - updating automatically" : "Connecting…"}</span>
           {s ? <span style={{ opacity: 0.7 }}>· {s.live_subscribers} watching</span> : null}
         </span>
         <div style={{ display: "flex", gap: 10 }}>

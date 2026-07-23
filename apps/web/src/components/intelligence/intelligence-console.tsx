@@ -177,7 +177,7 @@ export function IntelligenceConsole() {
             <div className="card pad">
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
                 <AlertTriangle style={{ width: 16, height: 16, color: "var(--brand-600)" }} />
-                <h3 style={{ fontSize: 14, fontWeight: 600, color: "var(--ink)" }}>Why — reasons</h3>
+                <h3 style={{ fontSize: 14, fontWeight: 600, color: "var(--ink)" }}>Why - reasons</h3>
               </div>
               {result.reasons.length > 0 ? (
                 <ul style={{ display: "flex", flexDirection: "column", gap: 8, listStyle: "none" }}>
@@ -188,7 +188,7 @@ export function IntelligenceConsole() {
                   ))}
                 </ul>
               ) : (
-                <p style={{ fontSize: 13.5, color: "var(--muted-hex)" }}>No specific red flags — nothing stood out as fraudulent.</p>
+                <p style={{ fontSize: 13.5, color: "var(--muted-hex)" }}>No specific red flags - nothing stood out as fraudulent.</p>
               )}
             </div>
             <div className="card pad" style={{ borderColor: cat.color }}>
@@ -228,7 +228,7 @@ export function IntelligenceConsole() {
       ) : (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 16, border: "1px dashed var(--border-2)", padding: "40px 20px", fontSize: 13, color: "var(--muted-hex)" }}>
           <Sparkles style={{ width: 16, height: 16, color: "var(--brand)" }} />
-          One fused 0–100 score, a risk category, and instant actions will appear here.
+          One fused 0-100 score, a risk category, and instant actions will appear here.
         </div>
       )}
     </div>

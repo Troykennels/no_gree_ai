@@ -14,7 +14,7 @@ const TRUST = [
   {
     icon: BrainCircuit,
     title: "AI fraud intelligence",
-    body: "Two ML models fused into one 0–100 risk score.",
+    body: "Two ML models fused into one 0-100 risk score.",
   },
 ];
 

@@ -269,7 +269,7 @@
 }
 
 /* ==================================================================
-   NO_GREE UI — semantic components ported from the design mockup.
+   NO_GREE UI - semantic components ported from the design mockup.
    Variables map to the app's raw-hex tokens: --border-hex / --muted-hex
    stand in for the mockup's --border / --muted (the bare names are HSL
    triplets used by shadcn). Surfaces that were hard-#fff become
@@ -564,7 +564,7 @@
 }
 
 /* ==================================================================
-   GREEN SIDEBAR — brand-green rail with light-on-green content
+   GREEN SIDEBAR - brand-green rail with light-on-green content
    (applies in both light and dark mode).
    ================================================================== */
 .sidebar {

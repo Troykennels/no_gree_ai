@@ -42,7 +42,7 @@ export function ProblemSection() {
           </h2>
           <p className="mt-4 text-muted-foreground">
             Today&apos;s systems flag fraud <em>after</em> the money is gone.
-            No_Gree AI flips that — catching the scam at the moment it lands in
+            No_Gree AI flips that - catching the scam at the moment it lands in
             your inbox.
           </p>
         </motion.div>
@@ -197,7 +197,7 @@ export function TrustSection() {
             </motion.h2>
             <motion.p {...fadeUp} className="mt-4 text-muted-foreground">
               From a student checking a scholarship SMS to a bank screening
-              millions of messages — No_Gree AI scales with you.
+              millions of messages - No_Gree AI scales with you.
             </motion.p>
           </div>
 
