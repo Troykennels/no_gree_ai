@@ -12,9 +12,23 @@ from .config import get_settings
 
 settings = get_settings()
 
+
+def _normalize_db_url(url: str) -> str:
+    """Managed hosts (Railway/Heroku) hand out ``postgres://`` or ``postgresql://``.
+    SQLAlchemy needs the explicit psycopg-v3 driver we install, so force the
+    ``postgresql+psycopg://`` scheme."""
+    if url.startswith("postgres://"):
+        return "postgresql+psycopg://" + url[len("postgres://"):]
+    if url.startswith("postgresql://"):
+        return "postgresql+psycopg://" + url[len("postgresql://"):]
+    return url
+
+
+_db_url = _normalize_db_url(settings.database_url)
+
 # SQLite (local dev) needs check_same_thread=False because FastAPI serves requests
 # from a threadpool; PostgreSQL (production/Railway) uses the default psycopg args.
-_is_sqlite = settings.database_url.startswith("sqlite")
+_is_sqlite = _db_url.startswith("sqlite")
 _connect_args = {"check_same_thread": False} if _is_sqlite else {}
 
 # Explicit connection-pool tuning for PostgreSQL (recycle stale conns; bounded
@@ -29,7 +43,7 @@ if not _is_sqlite:
     }
 
 engine = create_engine(
-    settings.database_url,
+    _db_url,
     pool_pre_ping=True,
     future=True,
     connect_args=_connect_args,
