@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 export type Theme = "light" | "dark";
 const KEY = "nogree.theme";
 
-/** Reads/writes the `.dark` class on <html> and persists the choice. Default dark. */
+/** Reads/writes the `.dark` class on <html> and persists the choice. Default light. */
 export function useTheme() {
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>("light");
 
   useEffect(() => {
     const stored = (typeof window !== "undefined"

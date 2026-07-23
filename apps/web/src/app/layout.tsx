@@ -42,14 +42,15 @@ export const metadata: Metadata = {
   },
 };
 
-// Applied before hydration to avoid a theme flash. Defaults to dark.
+// Applied before hydration to avoid a theme flash. Defaults to LIGHT (white),
+// matching the design mockup; dark is opt-in via the toggle.
 const themeScript = `
 (function(){
   try {
     var t = localStorage.getItem('nogree.theme');
-    if (t === 'light') { document.documentElement.classList.remove('dark'); }
-    else { document.documentElement.classList.add('dark'); }
-  } catch (e) { document.documentElement.classList.add('dark'); }
+    if (t === 'dark') { document.documentElement.classList.add('dark'); }
+    else { document.documentElement.classList.remove('dark'); }
+  } catch (e) { document.documentElement.classList.remove('dark'); }
 })();
 `;
 
@@ -59,7 +60,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} dark`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

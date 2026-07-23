@@ -20,7 +20,6 @@ import {
   Settings,
   Shield,
   ShieldCheck,
-  Sparkles,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -154,16 +153,8 @@ function Sidebar({
         ))}
       </nav>
 
-      {/* Foot: upgrade CTA + user */}
+      {/* Foot: user */}
       <div className="side-foot">
-        <div className="upgrade">
-          <span className="plan-pill">FREE</span>
-          <b>Go Pro</b>
-          <p>Unlimited scans, API access &amp; priority fraud alerts.</p>
-          <Link href="/settings" className="btn" onClick={onClose}>
-            <Sparkles style={{ width: 15, height: 15 }} /> Upgrade
-          </Link>
-        </div>
         <UserBlock me={me} hasToken={hasToken} onNavigate={onClose} />
       </div>
     </aside>
