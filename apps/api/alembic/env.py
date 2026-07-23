@@ -8,7 +8,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from app.core.config import get_settings
-from app.core.database import Base
+from app.core.database import Base, _normalize_db_url
 
 # Import models so their tables are registered on Base.metadata.
 from app.infrastructure.db import models  # noqa: F401
@@ -17,7 +17,9 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-config.set_main_option("sqlalchemy.url", get_settings().database_url)
+# Force the psycopg-v3 driver (managed hosts hand out a bare postgresql:// URL,
+# which SQLAlchemy would otherwise route to psycopg2, which we don't install).
+config.set_main_option("sqlalchemy.url", _normalize_db_url(get_settings().database_url))
 target_metadata = Base.metadata
 
 
