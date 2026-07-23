@@ -119,7 +119,7 @@ function Sidebar({
     <aside className={cn("sidebar", open && "open")}>
       {/* Brand */}
       <div className="brand">
-        <Link href="/" aria-label="No_Gree AI home" className="brand" style={{ padding: 0, border: 0, gap: 11 }}>
+        <Link href="/dashboard" aria-label="No_Gree AI dashboard" className="brand" style={{ padding: 0, border: 0, gap: 11 }}>
           <span className="logo">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.jpg" alt="No_Gree AI" />

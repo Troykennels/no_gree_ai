@@ -1,25 +1,10 @@
-import { Navbar } from "@/components/brand/navbar";
-import { Footer } from "@/components/brand/footer";
-import { Hero } from "@/components/marketing/hero";
-import {
-  Features,
-  HowItWorks,
-  ProblemSection,
-  TrustSection,
-} from "@/components/marketing/sections";
+import { redirect } from "next/navigation";
 
+/**
+ * The front page IS the auth screen. No marketing site — visitors land on
+ * "Welcome back" (log in) with a link to create an account. Already-signed-in
+ * users are bounced to the dashboard from the login screen.
+ */
 export default function HomePage() {
-  return (
-    <>
-      <Navbar />
-      <main>
-        <Hero />
-        <ProblemSection />
-        <HowItWorks />
-        <Features />
-        <TrustSection />
-      </main>
-      <Footer />
-    </>
-  );
+  redirect("/login");
 }

@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrainCircuit, Loader2, Mail, ShieldCheck } from "lucide-react";
-import { api, ApiError } from "@/lib/api";
+import { api, ApiError, tokenStore } from "@/lib/api";
 import { AuthBrandPanel } from "@/components/brand/auth-brand-panel";
 import { Field, PasswordField } from "@/components/brand/auth-fields";
 
@@ -14,6 +14,11 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Already signed in? Skip the login screen and go straight to the dashboard.
+  useEffect(() => {
+    if (tokenStore.get()) router.replace("/dashboard");
+  }, [router]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
