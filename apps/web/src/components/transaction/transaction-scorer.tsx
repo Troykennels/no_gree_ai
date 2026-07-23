@@ -1,9 +1,10 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { Loader2, CreditCard, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
-import { useState } from "react";
-import { api, ApiError } from "@/lib/api";
+import { Loader2, CreditCard, CheckCircle2, AlertTriangle, XCircle, Radio, Zap, Send } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { api, ApiError, tokenStore } from "@/lib/api";
 import type { TransactionResult, TxnDecision } from "@/lib/types";
 
 type Form = {
@@ -16,14 +17,21 @@ type Form = {
   C13: string;
 };
 
-const PRESETS: { label: string; values: Partial<Form> }[] = [
+const PRESETS: { label: string; region: string; values: Partial<Form> }[] = [
   {
     label: "Everyday POS (₦6,500)",
+    region: "Lagos",
     values: { TransactionAmt: "6500", ProductCD: "W", card4: "verve", card6: "debit", P_emaildomain: "gmail.com", C1: "1", C13: "1" },
   },
   {
     label: "High-risk transfer (₦1.85m)",
+    region: "Lagos",
     values: { TransactionAmt: "1850000", ProductCD: "C", card4: "mastercard", card6: "credit", P_emaildomain: "outlook.com", C1: "48", C13: "62" },
+  },
+  {
+    label: "Cross-border (₦480k)",
+    region: "Abuja",
+    values: { TransactionAmt: "480000", ProductCD: "C", card4: "visa", card6: "credit", P_emaildomain: "yahoo.com", C1: "22", C13: "31" },
   },
 ];
 
@@ -44,23 +52,53 @@ const EMPTY: Form = {
 
 export function TransactionScorer() {
   const [form, setForm] = useState<Form>(EMPTY);
+  const [region, setRegion] = useState("Lagos");
+  const [autoScore, setAutoScore] = useState(true);
+  const [authed, setAuthed] = useState(false);
+  useEffect(() => setAuthed(!!tokenStore.get()), []);
+
+  const buildFeatures = useCallback((): Record<string, number | string | null> => {
+    const f: Record<string, number | string | null> = {};
+    if (form.TransactionAmt) f.TransactionAmt = Number(form.TransactionAmt);
+    if (form.ProductCD) f.ProductCD = form.ProductCD;
+    if (form.card4) f.card4 = form.card4;
+    if (form.card6) f.card6 = form.card6;
+    if (form.P_emaildomain) f.P_emaildomain = form.P_emaildomain;
+    if (form.C1) f.C1 = Number(form.C1);
+    if (form.C13) f.C13 = Number(form.C13);
+    return f;
+  }, [form]);
 
   const mutation = useMutation<TransactionResult, Error, void>({
-    mutationFn: () => {
-      const features: Record<string, number | string | null> = {};
-      if (form.TransactionAmt) features.TransactionAmt = Number(form.TransactionAmt);
-      if (form.ProductCD) features.ProductCD = form.ProductCD;
-      if (form.card4) features.card4 = form.card4;
-      if (form.card6) features.card6 = form.card6;
-      if (form.P_emaildomain) features.P_emaildomain = form.P_emaildomain;
-      if (form.C1) features.C1 = Number(form.C1);
-      if (form.C13) features.C13 = Number(form.C13);
-      return api.scoreTransaction(features);
-    },
+    mutationFn: () => api.scoreTransaction(buildFeatures()),
   });
 
-  const set = (k: keyof Form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+  const ingest = useMutation<Record<string, unknown>, Error, void>({
+    mutationFn: () => api.ingestTransaction(buildFeatures(), region),
+  });
+
+  // Automation: auto-score (debounced) whenever inputs change and auto-score is on.
+  const scoreRef = useRef(mutation.mutate);
+  scoreRef.current = mutation.mutate;
+  useEffect(() => {
+    if (!autoScore || !form.TransactionAmt) return;
+    const t = setTimeout(() => scoreRef.current(), 650);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form, autoScore]);
+
+  const set = (k: keyof Form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    ingest.reset();
     setForm((f) => ({ ...f, [k]: e.target.value }));
+  };
+
+  const applyPreset = (p: (typeof PRESETS)[number]) => {
+    ingest.reset();
+    setRegion(p.region);
+    setForm({ ...EMPTY, ...p.values });
+    // Instant score on preset — feels automated.
+    setTimeout(() => scoreRef.current(), 30);
+  };
 
   const errorText =
     mutation.error instanceof ApiError
@@ -83,10 +121,14 @@ export function TransactionScorer() {
         <div style={{ marginBottom: 16, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 12, color: "var(--muted-hex)" }}>Presets:</span>
           {PRESETS.map((p) => (
-            <button key={p.label} className="sample" onClick={() => { setForm({ ...EMPTY, ...p.values }); mutation.reset(); }}>
+            <button key={p.label} className="sample" onClick={() => applyPreset(p)}>
               {p.label}
             </button>
           ))}
+          <label className="remember" style={{ marginLeft: "auto", fontSize: 12.5 }} title="Re-score automatically as you edit">
+            <input type="checkbox" checked={autoScore} onChange={(e) => setAutoScore(e.target.checked)} />
+            <Zap style={{ width: 14, height: 14, color: autoScore ? "var(--brand-600)" : "var(--muted-hex)" }} /> Auto-score
+          </label>
         </div>
 
         <div className="grid" style={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
@@ -129,7 +171,9 @@ export function TransactionScorer() {
         </div>
 
         <div style={{ marginTop: 18, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-          <p style={{ fontSize: 12, color: "var(--muted-hex)" }}>Any field left blank is imputed by the model.</p>
+          <p style={{ fontSize: 12, color: "var(--muted-hex)", display: "inline-flex", alignItems: "center", gap: 6 }}>
+            {autoScore ? <><Radio style={{ width: 13, height: 13, color: "var(--brand-600)" }} /> Auto-scoring live — blank fields are imputed by the model.</> : "Any field left blank is imputed by the model."}
+          </p>
           <button className="head-btn primary" onClick={() => mutation.mutate()} disabled={mutation.isPending}>
             {mutation.isPending ? <><Loader2 className="animate-spin" /> Scoring…</> : <><CreditCard /> Score transaction</>}
           </button>
@@ -182,6 +226,25 @@ export function TransactionScorer() {
                 })}
               </div>
             )}
+
+            {/* Automation: push the scored transaction into the live engine. */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap", borderTop: "1px solid var(--border-hex)", paddingTop: 14 }}>
+              <p style={{ fontSize: 12, color: "var(--muted-hex)" }}>
+                {ingest.isSuccess
+                  ? <span style={{ color: "var(--safe)", fontWeight: 600 }}>✓ Streamed to the live engine.</span>
+                  : "Feed this into automated monitoring — it updates the security score, heatmap and alerts in real time."}
+              </p>
+              {ingest.isSuccess ? (
+                <Link href="/monitor" className="head-btn"><Radio /> View on live monitor</Link>
+              ) : authed ? (
+                <button className="head-btn" onClick={() => ingest.mutate()} disabled={ingest.isPending}>
+                  {ingest.isPending ? <><Loader2 className="animate-spin" /> Sending…</> : <><Send /> Push to live monitor</>}
+                </button>
+              ) : (
+                <Link href="/login" className="head-btn"><Send /> Log in to automate</Link>
+              )}
+            </div>
+            {ingest.error && <p className="alert-error">Could not push to the engine. Are you signed in?</p>}
 
             <p style={{ fontSize: 11.5, color: "var(--muted-hex)" }}>{result.algorithm} · {result.model_version}</p>
           </div>

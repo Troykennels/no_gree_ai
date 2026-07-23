@@ -562,3 +562,37 @@
   .rec-item:last-child { border-bottom: 0; }
   .rec-item .rnum { width: 26px; height: 26px; border-radius: 8px; flex: none; display: grid; place-items: center; font-size: 12px; font-weight: 700; background: var(--brand-tint); color: var(--brand-700); }
 }
+
+/* ==================================================================
+   GREEN SIDEBAR — brand-green rail with light-on-green content
+   (applies in both light and dark mode).
+   ================================================================== */
+.sidebar {
+  background: linear-gradient(185deg, #0c7a52 0%, #075437 55%, #05412c 100%);
+  border-right-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+}
+.sidebar .brand { border-bottom-color: rgba(255, 255, 255, 0.12); }
+.sidebar .brand .txt b { color: #fff; }
+.sidebar .brand .txt span { color: rgba(255, 255, 255, 0.6); }
+.sidebar .brand .x { color: rgba(255, 255, 255, 0.75); }
+.sidebar .nav .group-label { color: rgba(255, 255, 255, 0.5); }
+.sidebar .nav a { color: rgba(255, 255, 255, 0.82); }
+.sidebar .nav a svg { stroke: currentColor; }
+.sidebar .nav a:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.sidebar .nav a.active { background: rgba(255, 255, 255, 0.16); color: #fff; font-weight: 600; }
+.sidebar .nav a.active svg { stroke: #fff; opacity: 1; }
+.sidebar .nav a.active::before { background: var(--neon-green); }
+.sidebar .nav a .count { color: #fff; background: rgba(240, 46, 60, 0.85); }
+.sidebar .side-foot { border-top-color: rgba(255, 255, 255, 0.12); }
+.sidebar .user:hover { background: rgba(255, 255, 255, 0.1); }
+.sidebar .user .who { color: #fff; }
+.sidebar .user .who small { color: rgba(255, 255, 255, 0.6); }
+.sidebar .user .out { color: rgba(255, 255, 255, 0.75); }
+.sidebar .user .out:hover { color: #fff; background: rgba(255, 255, 255, 0.12); }
+.sidebar .avatar { background: rgba(255, 255, 255, 0.18); color: #fff; }
+/* unauthenticated log-in / sign-up buttons in the footer */
+.sidebar .side-foot .btn { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.18); color: #fff; }
+.sidebar .side-foot .btn:hover { background: rgba(255, 255, 255, 0.2); }
+.sidebar .side-foot .btn.primary { background: var(--neon-green); border-color: var(--neon-green); color: #06301f; }
+.sidebar .side-foot .btn.primary:hover { filter: brightness(1.05); }
