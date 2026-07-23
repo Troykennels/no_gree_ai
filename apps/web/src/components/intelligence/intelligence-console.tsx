@@ -1,37 +1,50 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "framer-motion";
 import {
   Loader2, Brain, Sparkles, AlertTriangle, ShieldAlert, AlertCircle,
   Info, ShieldCheck, CreditCard, MessageSquare, ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
 import { api, ApiError } from "@/lib/api";
-import type { IntelligenceResult, Priority, RiskBand, RiskCategory } from "@/lib/types";
-import { riskTheme } from "@/lib/risk";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import { RiskGauge } from "@/components/detector/risk-gauge";
+import type { IntelligenceResult, Priority, RiskCategory } from "@/lib/types";
 
-const CATEGORY_BAND: Record<RiskCategory, RiskBand> = {
-  Safe: "minimal", Low: "low", Medium: "elevated", High: "high", Critical: "critical",
+const CAT_COLOR: Record<RiskCategory, { color: string; tint: string }> = {
+  Safe: { color: "var(--safe)", tint: "var(--safe-t)" },
+  Low: { color: "var(--low)", tint: "var(--low-t)" },
+  Medium: { color: "var(--med)", tint: "var(--med-t)" },
+  High: { color: "var(--high)", tint: "var(--high-t)" },
+  Critical: { color: "var(--crit)", tint: "var(--crit-t)" },
 };
 
-const PRIORITY_UI: Record<Priority, { icon: typeof AlertTriangle; text: string; card: string }> = {
-  critical: { icon: AlertTriangle, text: "text-danger", card: "border-danger/30 bg-danger/5" },
-  high: { icon: ShieldAlert, text: "text-danger", card: "border-danger/20 bg-danger/5" },
-  medium: { icon: AlertCircle, text: "text-warning", card: "border-warning/25 bg-warning/5" },
-  low: { icon: Info, text: "text-muted-foreground", card: "border-border" },
-  info: { icon: ShieldCheck, text: "text-success", card: "border-success/25 bg-success/5" },
+const PRIO: Record<Priority, { icon: typeof AlertTriangle; color: string; tint: string }> = {
+  critical: { icon: AlertTriangle, color: "var(--crit)", tint: "var(--crit-t)" },
+  high: { icon: ShieldAlert, color: "var(--high)", tint: "var(--high-t)" },
+  medium: { icon: AlertCircle, color: "var(--med)", tint: "var(--med-t)" },
+  low: { icon: Info, color: "var(--ink-2)", tint: "var(--surface-2)" },
+  info: { icon: ShieldCheck, color: "var(--safe)", tint: "var(--safe-t)" },
 };
 
 const SAMPLE =
   "Your card **2290 was used for NGN180,000 abroad. If this wasn't you, call 08012345678 and confirm your OTP now to reverse it.";
+
+function ScoreRing({ score, color }: { score: number; color: string }) {
+  const R = 68, C = 2 * Math.PI * R;
+  const dash = (Math.max(0, Math.min(100, score)) / 100) * C;
+  return (
+    <div className="gauge-wrap" style={{ width: 160, height: 160 }}>
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle className="track" cx="80" cy="80" r={R} fill="none" strokeWidth="13" />
+        <circle cx="80" cy="80" r={R} fill="none" stroke={color} strokeWidth="13" strokeLinecap="round"
+          strokeDasharray={`${dash} ${C - dash}`} style={{ transition: "stroke-dasharray .6s ease" }} />
+      </svg>
+      <div className="gauge-center">
+        <span className="g-num" style={{ fontSize: 40 }}>{score}</span>
+        <span className="g-of">/ 100</span>
+      </div>
+    </div>
+  );
+}
 
 export function IntelligenceConsole() {
   const [message, setMessage] = useState("");
@@ -45,12 +58,7 @@ export function IntelligenceConsole() {
     mutationFn: () => {
       const txn =
         showTxn && (amount || email)
-          ? {
-              TransactionAmt: amount ? Number(amount) : null,
-              ProductCD: product,
-              card6: cardType,
-              P_emaildomain: email || null,
-            }
+          ? { TransactionAmt: amount ? Number(amount) : null, ProductCD: product, card6: cardType, P_emaildomain: email || null }
           : null;
       return api.assessIntelligence(message.trim() || null, txn);
     },
@@ -64,240 +72,165 @@ export function IntelligenceConsole() {
           ? "The models are still starting up. Try again in a moment."
           : mutation.error.message
       : mutation.error
-        ? "Could not reach the SecureNaija API. Is it running?"
+        ? "Could not reach the No_Gree AI API. Is it running?"
         : null;
 
   const canSubmit = message.trim().length > 0 || (showTxn && (amount || email));
   const result = mutation.data;
-  const band = result ? CATEGORY_BAND[result.category] : "minimal";
-  const theme = riskTheme(band);
-  const selectCls =
-    "flex h-11 w-full rounded-xl border border-input bg-background/60 px-4 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  const cat = result ? CAT_COLOR[result.category] : CAT_COLOR.Safe;
 
   return (
-    <div className="space-y-5">
+    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       {/* Input */}
-      <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
-        <Textarea
+      <div className="card pad">
+        <textarea
           aria-label="Message to assess for fraud"
+          className="ng-textarea"
+          style={{ minHeight: 120 }}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Paste a suspicious message (optional if you add a transaction)…"
           maxLength={5000}
-          className="min-h-[120px]"
         />
 
         <button
           onClick={() => setShowTxn((v) => !v)}
-          className="mt-3 flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+          className="link-green"
+          style={{ marginTop: 12, display: "inline-flex", alignItems: "center", gap: 6, background: "none", border: 0 }}
         >
-          <CreditCard className="size-4" />
+          <CreditCard style={{ width: 15, height: 15 }} />
           {showTxn ? "Remove transaction" : "Add a transaction to combine"}
-          <ChevronDown className={cn("size-4 transition-transform", showTxn && "rotate-180")} />
+          <ChevronDown style={{ width: 15, height: 15, transform: showTxn ? "rotate(180deg)" : "none", transition: "transform .2s" }} />
         </button>
 
-        <AnimatePresence>
-          {showTxn && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden"
-            >
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label htmlFor="amt">Amount (₦)</Label>
-                  <Input id="amt" type="number" placeholder="e.g. 180,000" value={amount}
-                    onChange={(e) => setAmount(e.target.value)} />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="email">Purchaser email domain</Label>
-                  <Input id="email" placeholder="e.g. gmail.com" value={email}
-                    onChange={(e) => setEmail(e.target.value)} />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="prod">Product category</Label>
-                  <select id="prod" className={selectCls} value={product}
-                    onChange={(e) => setProduct(e.target.value)}>
-                    {["W", "C", "R", "H", "S"].map((p) => <option key={p} value={p}>{p}</option>)}
-                  </select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="ctype">Card type</Label>
-                  <select id="ctype" className={selectCls} value={cardType}
-                    onChange={(e) => setCardType(e.target.value)}>
-                    {["debit", "credit"].map((c) => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {showTxn && (
+          <div className="grid" style={{ gridTemplateColumns: "repeat(2, 1fr)", marginTop: 12 }}>
+            <div>
+              <label className="field-label" htmlFor="amt">Amount (₦)</label>
+              <input id="amt" className="ng-input" type="number" placeholder="e.g. 180000" value={amount} onChange={(e) => setAmount(e.target.value)} />
+            </div>
+            <div>
+              <label className="field-label" htmlFor="iemail">Purchaser email domain</label>
+              <input id="iemail" className="ng-input" placeholder="e.g. gmail.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <div>
+              <label className="field-label" htmlFor="prod">Product category</label>
+              <select id="prod" className="ng-select" value={product} onChange={(e) => setProduct(e.target.value)}>
+                {["W", "C", "R", "H", "S"].map((p) => <option key={p} value={p}>{p}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="field-label" htmlFor="ictype">Card type</label>
+              <select id="ictype" className="ng-select" value={cardType} onChange={(e) => setCardType(e.target.value)}>
+                {["debit", "credit"].map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+          </div>
+        )}
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <button
-            onClick={() => { setMessage(SAMPLE); mutation.reset(); }}
-            className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground hover:bg-secondary/70"
-          >
-            Try an example
+        <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          <button className="sample" onClick={() => { setMessage(SAMPLE); mutation.reset(); }}>Try an example</button>
+          <button className="head-btn primary" onClick={() => mutation.mutate()} disabled={!canSubmit || mutation.isPending}>
+            {mutation.isPending ? <><Loader2 className="animate-spin" /> Assessing…</> : <><Brain /> Assess fraud risk</>}
           </button>
-          <Button onClick={() => mutation.mutate()} disabled={!canSubmit || mutation.isPending}
-            className="min-w-[170px]">
-            {mutation.isPending ? (
-              <><Loader2 className="animate-spin" /> Assessing…</>
-            ) : (
-              <><Brain /> Assess fraud risk</>
-            )}
-          </Button>
         </div>
 
-        {errorText && (
-          <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-xs font-medium text-danger">
-            {errorText}
-          </p>
-        )}
+        {errorText && <p className="alert-error">{errorText}</p>}
       </div>
 
       {/* Result */}
-      <AnimatePresence mode="wait">
-        {result ? (
-          <motion.div
-            key="result"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="space-y-4"
-          >
-            {/* Overall score */}
-            <div className={cn("overflow-hidden rounded-2xl border bg-card ring-1", theme.ring)}>
-              <div className={cn("flex items-center gap-3 px-6 py-4", theme.bg)}>
-                <Sparkles className={cn("size-5", theme.text)} />
-                <div className="flex-1">
-                  <p className={cn("text-sm font-bold", theme.text)}>
-                    {result.category} risk
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Risk score {result.overall_risk_score}/100 · Confidence{" "}
-                    {Math.round(result.confidence * 100)}%
-                  </p>
-                </div>
-                <div className="hidden gap-1.5 sm:flex">
-                  {result.scam && (
-                    <Badge variant="outline"><MessageSquare className="size-3" /> {result.scam.label}</Badge>
-                  )}
-                  {result.transaction && (
-                    <Badge variant="outline"><CreditCard className="size-3" /> {result.transaction.decision}</Badge>
-                  )}
-                </div>
-              </div>
-
-              <div className="grid gap-6 p-6 sm:grid-cols-[auto_1fr] sm:items-center">
-                <div className="mx-auto">
-                  <RiskGauge probability={result.overall_risk_score / 100} band={band} />
-                </div>
-                <div className="space-y-3">
-                  <p className="text-sm leading-relaxed text-foreground/90">
-                    {result.human_explanation}
-                  </p>
-                  {result.signals.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                      {result.signals.map((s, i) => (
-                        <span key={`${s.type}-${i}`}
-                          className={cn("rounded-full border px-2.5 py-1 text-xs font-medium",
-                            PRIORITY_UI[s.severity].card, PRIORITY_UI[s.severity].text)}>
-                          {s.label}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Reasons + what this means */}
-            <div className="grid gap-4 sm:grid-cols-[1.3fr_1fr]">
-              <div className="rounded-2xl border border-border bg-card p-5">
-                <div className="mb-3 flex items-center gap-2">
-                  <AlertTriangle className="size-4 text-primary" />
-                  <h2 className="font-semibold">Why - reasons</h2>
-                </div>
-                {result.reasons.length > 0 ? (
-                  <ul className="space-y-2">
-                    {result.reasons.map((r, i) => (
-                      <motion.li key={r + i}
-                        initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.04 * i }}
-                        className="flex items-center gap-2.5 text-sm text-foreground/90">
-                        <span className={cn("size-1.5 shrink-0 rounded-full", theme.text.replace("text-", "bg-"))} />
-                        {r}
-                      </motion.li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    No specific red flags - nothing stood out as fraudulent.
-                  </p>
-                )}
-              </div>
-              <div className={cn("rounded-2xl border bg-card p-5 ring-1", theme.ring)}>
-                <div className="mb-2 flex items-center gap-2">
-                  <ShieldAlert className={cn("size-4", theme.text)} />
-                  <h2 className="font-semibold">What this means</h2>
-                </div>
-                <p className="text-sm leading-relaxed text-foreground/90">
-                  {result.risk_explanation}
+      {result ? (
+        <div className="reveal in" style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+          {/* Overall */}
+          <div className="card">
+            <div className="result-head">
+              <span className="ric" style={{ background: cat.tint, color: cat.color }}><Sparkles /></span>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontWeight: 700, color: cat.color, fontSize: 15 }}>{result.category} risk</p>
+                <p style={{ fontSize: 12, color: "var(--muted-hex)" }}>
+                  Risk score {result.overall_risk_score}/100 · Confidence {Math.round(result.confidence * 100)}%
                 </p>
               </div>
-            </div>
-
-            {/* AI Recommendations */}
-            <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
-              <div className="mb-4 flex items-center gap-2">
-                <Brain className="size-4 text-primary" />
-                <h2 className="font-semibold">AI recommendations</h2>
-                <Badge variant="outline" className="ml-auto">{result.recommendations.length} actions</Badge>
+              <div style={{ display: "flex", gap: 8 }}>
+                {result.scam && <span className="chip" style={{ background: "var(--surface-2)", color: "var(--ink-2)" }}><MessageSquare style={{ width: 12, height: 12 }} /> {result.scam.label}</span>}
+                {result.transaction && <span className="chip" style={{ background: "var(--surface-2)", color: "var(--ink-2)" }}><CreditCard style={{ width: 12, height: 12 }} /> {result.transaction.decision}</span>}
               </div>
-              <ul className="space-y-2.5">
-                {result.recommendations.map((r, i) => {
-                  const ui = PRIORITY_UI[r.priority];
-                  const Icon = ui.icon;
-                  return (
-                    <motion.li
-                      key={r.id}
-                      initial={{ opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.05 * i }}
-                      className={cn("flex items-start gap-3 rounded-xl border p-3", ui.card)}
-                    >
-                      <Icon className={cn("mt-0.5 size-4 shrink-0", ui.text)} />
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-foreground/90">{r.action}</p>
-                          <span className={cn("text-[10px] font-bold uppercase tracking-wider", ui.text)}>
-                            {r.priority}
-                          </span>
-                        </div>
-                        <p className="mt-0.5 text-xs text-muted-foreground">{r.detail}</p>
-                      </div>
-                    </motion.li>
-                  );
-                })}
-              </ul>
             </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="hint"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-border/70 py-10 text-sm text-muted-foreground"
-          >
-            <Sparkles className="size-4 text-primary" />
-            One fused 0-100 score, a risk category, and instant actions will appear here.
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <div style={{ padding: 20, display: "grid", gridTemplateColumns: "auto 1fr", gap: 24, alignItems: "center" }}>
+              <ScoreRing score={result.overall_risk_score} color={cat.color} />
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <p style={{ fontSize: 14, lineHeight: 1.6, color: "var(--ink-2)" }}>{result.human_explanation}</p>
+                {result.signals.length > 0 && (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    {result.signals.map((s, i) => {
+                      const p = PRIO[s.severity];
+                      return <span key={`${s.type}-${i}`} className="chip" style={{ background: p.tint, color: p.color }}><span className="d" style={{ background: p.color }} /> {s.label}</span>;
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Reasons + meaning */}
+          <div className="grid" style={{ gridTemplateColumns: "1.3fr 1fr" }}>
+            <div className="card pad">
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                <AlertTriangle style={{ width: 16, height: 16, color: "var(--brand-600)" }} />
+                <h3 style={{ fontSize: 14, fontWeight: 600, color: "var(--ink)" }}>Why — reasons</h3>
+              </div>
+              {result.reasons.length > 0 ? (
+                <ul style={{ display: "flex", flexDirection: "column", gap: 8, listStyle: "none" }}>
+                  {result.reasons.map((r, i) => (
+                    <li key={r + i} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13.5, color: "var(--ink-2)" }}>
+                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: cat.color, flex: "none" }} /> {r}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p style={{ fontSize: 13.5, color: "var(--muted-hex)" }}>No specific red flags — nothing stood out as fraudulent.</p>
+              )}
+            </div>
+            <div className="card pad" style={{ borderColor: cat.color }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                <ShieldAlert style={{ width: 16, height: 16, color: cat.color }} />
+                <h3 style={{ fontSize: 14, fontWeight: 600, color: "var(--ink)" }}>What this means</h3>
+              </div>
+              <p style={{ fontSize: 13.5, lineHeight: 1.6, color: "var(--ink-2)" }}>{result.risk_explanation}</p>
+            </div>
+          </div>
+
+          {/* Recommendations */}
+          <div className="card">
+            <div className="card-h">
+              <h3><Brain style={{ width: 16, height: 16, verticalAlign: "-3px", marginRight: 6, color: "var(--brand-600)" }} /> AI recommendations</h3>
+              <span className="chip" style={{ background: "var(--brand-tint)", color: "var(--brand-700)" }}>{result.recommendations.length} actions</span>
+            </div>
+            {result.recommendations.map((r, i) => {
+              const ui = PRIO[r.priority];
+              const Icon = ui.icon;
+              return (
+                <div className="rec-item" key={r.id}>
+                  <span className="rnum" style={{ background: ui.tint, color: ui.color }}>{i + 1}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <Icon style={{ width: 15, height: 15, color: ui.color, flex: "none" }} />
+                      <p style={{ fontSize: 14, fontWeight: 600, color: "var(--ink)" }}>{r.action}</p>
+                      <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: ui.color }}>{r.priority}</span>
+                    </div>
+                    <p style={{ marginTop: 3, fontSize: 12.5, color: "var(--muted-hex)" }}>{r.detail}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 16, border: "1px dashed var(--border-2)", padding: "40px 20px", fontSize: 13, color: "var(--muted-hex)" }}>
+          <Sparkles style={{ width: 16, height: 16, color: "var(--brand)" }} />
+          One fused 0–100 score, a risk category, and instant actions will appear here.
+        </div>
+      )}
     </div>
   );
 }

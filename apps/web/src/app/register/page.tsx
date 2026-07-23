@@ -3,12 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
-import { Logo } from "@/components/brand/logo";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Loader2, Mail, User } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
+import { AuthBrandPanel } from "@/components/brand/auth-brand-panel";
+import { Field, PasswordField } from "@/components/brand/auth-fields";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -38,73 +36,83 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="grid min-h-screen place-items-center mesh px-4 py-10">
-      <div className="w-full max-w-sm">
-        <Link href="/" className="mb-8 flex justify-center">
-          <Logo />
-        </Link>
-        <div className="rounded-2xl border border-border bg-card p-7 shadow-xl">
-          <h1 className="text-xl font-bold">Create your account</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Free forever for individuals. Keep a history of every scan.
-          </p>
+    <main className="login-view">
+      <AuthBrandPanel />
 
-          <form onSubmit={onSubmit} className="mt-6 space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="name">Full name</Label>
-              <Input
-                id="name"
-                required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Ada Okeke"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                minLength={8}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="At least 8 characters"
-              />
-            </div>
+      <div className="auth-panel">
+        <div className="auth-card">
+          <Link href="/" className="mini-logo">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.jpg" alt="No_Gree AI" />
+            <b>No_Gree AI</b>
+          </Link>
+
+          <h2>Create your account</h2>
+          <p className="sub">Start protecting yourself from fraud in seconds. Free for individuals.</p>
+
+          <form onSubmit={onSubmit}>
+            <Field
+              id="name"
+              label="Full name"
+              icon={<User />}
+              autoComplete="name"
+              required
+              value={fullName}
+              onChange={setFullName}
+              placeholder="Ada Okeke"
+            />
+            <Field
+              id="email"
+              label="Email"
+              icon={<Mail />}
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={setEmail}
+              placeholder="you@example.com"
+            />
+            <PasswordField
+              value={password}
+              onChange={setPassword}
+              autoComplete="new-password"
+              minLength={8}
+              placeholder="At least 8 characters"
+            />
 
             {error && (
-              <p className="rounded-lg bg-danger/10 px-3 py-2 text-xs font-medium text-danger">
+              <p
+                style={{
+                  marginTop: 14,
+                  borderRadius: 10,
+                  background: "var(--crit-t)",
+                  color: "var(--crit)",
+                  padding: "9px 12px",
+                  fontSize: 12.5,
+                  fontWeight: 500,
+                }}
+              >
                 {error}
               </p>
             )}
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading && <Loader2 className="animate-spin" />}
+            <button type="submit" className="btn primary block" disabled={loading}>
+              {loading && <Loader2 className="animate-spin" style={{ width: 17, height: 17 }} />}
               Create account
-            </Button>
+            </button>
           </form>
-        </div>
 
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <Link href="/login" className="font-semibold text-primary hover:underline">
-            Log in
-          </Link>
-        </p>
+          <p style={{ marginTop: 22, textAlign: "center", fontSize: 13, color: "var(--muted-hex)" }}>
+            Already have an account?{" "}
+            <Link href="/login" className="link-green">
+              Sign in
+            </Link>
+          </p>
+
+          <p style={{ marginTop: 18, textAlign: "center", fontSize: 11, lineHeight: 1.6, color: "var(--muted-hex)" }}>
+            By creating an account you agree to our fair-use policy. We never ask for your BVN, OTP or PIN.
+          </p>
+        </div>
       </div>
     </main>
   );

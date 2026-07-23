@@ -40,6 +40,10 @@ dist/
 *.db
 *.sqlite3
 
+# Deploy
+.vercel/
+.railway/
+
 # OS / editor
 .DS_Store
 Thumbs.db

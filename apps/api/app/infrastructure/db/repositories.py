@@ -34,6 +34,15 @@ class SqlAlchemyUserRepository:
         self._session.refresh(row)
         return user_to_domain(row)
 
+    def delete_by_id(self, user_id: UUID) -> bool:
+        row = self._session.get(UserModel, user_id)
+        if row is None:
+            return False
+        # Cascades to the user's scans (relationship + FK ON DELETE CASCADE).
+        self._session.delete(row)
+        self._session.commit()
+        return True
+
 
 class SqlAlchemyScanRepository:
     def __init__(self, session: Session) -> None:

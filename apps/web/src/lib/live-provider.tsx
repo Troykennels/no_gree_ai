@@ -52,7 +52,7 @@ export function useLiveData(): LiveContextValue {
   return ctx;
 }
 
-const STORAGE_KEY = "securenaija.notifications.v1";
+const STORAGE_KEY = "nogree.notifications.v1";
 const MAX_HISTORY = 100;
 const TOAST_MS = 6000;
 const MAX_TOASTS = 4;
@@ -120,7 +120,7 @@ export function LiveDataProvider({ children }: { children: React.ReactNode }) {
     if (now - lastBrowserNotify.current < BROWSER_MIN_GAP_MS) return;
     lastBrowserNotify.current = now;
     try {
-      new Notification(`SecureNaija - ${n.title}`, { body: n.body, tag: n.source });
+      new Notification(`No_Gree AI · ${n.title}`, { body: n.body, tag: n.source });
     } catch {
       /* some browsers throw if not in a user gesture - ignore */
     }

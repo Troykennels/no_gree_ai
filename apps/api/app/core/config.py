@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     )
 
     # App
-    app_name: str = "SecureNaija API"
+    app_name: str = "No_Gree AI API"
     api_env: str = Field(default="development", alias="API_ENV")
 
     # Database

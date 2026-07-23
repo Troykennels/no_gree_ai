@@ -11,7 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-# SecureNaija is a Nigerian product: callers send amounts in Naira (NGN). The
+# No_Gree AI is a Nigerian product: callers send amounts in Naira (NGN). The
 # Model 2 corpus (IEEE-CIS) is denominated in a smaller unit, so we scale NGN to
 # the model's training magnitude only for scoring - the Naira value is preserved
 # for display. Cosmetic demo rate; a real deployment would use a live FX feed.

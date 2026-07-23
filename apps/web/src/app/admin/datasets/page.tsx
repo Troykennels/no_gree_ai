@@ -1,16 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import {
   AlertTriangle,
-  ArrowLeft,
   Database,
   FileWarning,
   Layers,
   Percent,
 } from "lucide-react";
-import { Logo } from "@/components/brand/logo";
+import { AppShell } from "@/components/app/app-shell";
+import { AdminGate } from "@/components/app/admin-gate";
+import { PageHeader } from "@/components/app/page-header";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn, formatPercent } from "@/lib/utils";
@@ -38,35 +38,15 @@ export default function AdminDatasetsPage() {
   });
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-border/60 glass">
-        <div className="container flex h-16 items-center justify-between">
-          <Link href="/">
-            <Logo />
-          </Link>
-          <Badge variant="primary">Admin · Datasets</Badge>
-        </div>
-      </header>
+    <AppShell>
+      <AdminGate>
+      <PageHeader
+        eyebrow="Admin"
+        title="Dataset Intelligence"
+        description="Size, class balance, missing values and fraud/scam ratios across every training dataset."
+      />
 
-      <main className="container py-10">
-        <Link
-          href="/"
-          className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="size-4" /> Back
-        </Link>
-
-        <div className="mb-8">
-          <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
-            Dataset Intelligence
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Size, class balance, missing values and fraud/scam ratios across every
-            training dataset.
-          </p>
-        </div>
-
-        {isLoading && <SkeletonGrid />}
+      {isLoading && <SkeletonGrid />}
 
         {error && (
           <Card className="flex items-center gap-3 border-warning/40 p-6">
@@ -95,8 +75,8 @@ export default function AdminDatasetsPage() {
             <ChartGallery charts={data.generated_charts} />
           </>
         )}
-      </main>
-    </div>
+      </AdminGate>
+    </AppShell>
   );
 }
 

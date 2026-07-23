@@ -285,7 +285,16 @@ export interface AuthUser {
   email: string;
   full_name: string;
   is_active: boolean;
+  role?: string;
   created_at?: string | null;
+}
+
+export interface AuditLogEntry {
+  [key: string]: string;
+  ts: string;
+  event: string;
+  actor: string;
+  detail: string;
 }
 
 export interface TokenResponse {

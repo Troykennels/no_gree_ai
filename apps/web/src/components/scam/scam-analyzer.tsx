@@ -1,17 +1,10 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "framer-motion";
 import { Loader2, ShieldCheck, ShieldAlert, AlertTriangle, Sparkles } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
-import type { RiskBand, ScamLabel, ScamResult } from "@/lib/types";
-import { riskTheme } from "@/lib/risk";
-import { cn } from "@/lib/utils";
+import type { ScamLabel, ScamResult } from "@/lib/types";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { RiskGauge } from "@/components/detector/risk-gauge";
 
 const SAMPLES: { label: string; text: string }[] = [
   {
@@ -28,16 +21,10 @@ const SAMPLES: { label: string; text: string }[] = [
   },
 ];
 
-const LABEL_BAND: Record<ScamLabel, RiskBand> = {
-  Scam: "high",
-  Suspicious: "elevated",
-  Safe: "minimal",
-};
-
-const LABEL_ICON = {
-  Scam: AlertTriangle,
-  Suspicious: ShieldAlert,
-  Safe: ShieldCheck,
+const UI: Record<ScamLabel, { icon: typeof ShieldCheck; color: string; tint: string; chip: string }> = {
+  Scam: { icon: AlertTriangle, color: "var(--crit)", tint: "var(--crit-t)", chip: "c-crit" },
+  Suspicious: { icon: ShieldAlert, color: "var(--med)", tint: "var(--med-t)", chip: "c-med" },
+  Safe: { icon: ShieldCheck, color: "var(--safe)", tint: "var(--safe-t)", chip: "c-safe" },
 };
 
 export function ScamAnalyzer() {
@@ -53,135 +40,85 @@ export function ScamAnalyzer() {
         ? "The scam-detection model is still starting up. Please try again in a moment."
         : mutation.error.message
       : mutation.error
-        ? "Could not reach the SecureNaija API. Is it running?"
+        ? "Could not reach the No_Gree AI API. Is it running?"
         : null;
 
   const result = mutation.data;
-  const band = result ? LABEL_BAND[result.label] : "minimal";
-  const theme = riskTheme(band);
-  const Icon = result ? LABEL_ICON[result.label] : ShieldCheck;
+  const ui = result ? UI[result.label] : UI.Safe;
+  const Icon = ui.icon;
+  const pct = result ? Math.round(result.scam_probability * 100) : 0;
 
   return (
-    <div className="space-y-5">
-      <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
-        <Textarea
+    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+      <div className="card pad">
+        <textarea
           aria-label="Message to check for a scam"
+          className="ng-textarea"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Paste the suspicious SMS, WhatsApp message or email here…"
           maxLength={5000}
-          className="min-h-[140px]"
         />
 
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-xs text-muted-foreground">Try:</span>
-            {SAMPLES.map((s) => (
-              <button
-                key={s.label}
-                onClick={() => {
-                  setMessage(s.text);
-                  mutation.reset();
-                }}
-                className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground transition-colors hover:bg-secondary/70"
-              >
-                {s.label}
+        <div style={{ marginTop: 14, display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 12, color: "var(--muted-hex)" }}>Try:</span>
+            {SAMPLES.map((sm) => (
+              <button key={sm.label} className="sample" onClick={() => { setMessage(sm.text); mutation.reset(); }}>
+                {sm.label}
               </button>
             ))}
           </div>
 
-          <Button
-            onClick={() => mutation.mutate()}
-            disabled={!message.trim() || mutation.isPending}
-            className="min-w-[150px]"
-          >
-            {mutation.isPending ? (
-              <>
-                <Loader2 className="animate-spin" /> Analyzing…
-              </>
-            ) : (
-              <>
-                <Sparkles /> Check for scam
-              </>
-            )}
-          </Button>
+          <button className="head-btn primary" onClick={() => mutation.mutate()} disabled={!message.trim() || mutation.isPending}>
+            {mutation.isPending ? <><Loader2 className="animate-spin" /> Analysing…</> : <><Sparkles /> Check for scam</>}
+          </button>
         </div>
 
-        {errorText && (
-          <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-xs font-medium text-danger">
-            {errorText}
-          </p>
-        )}
+        {errorText && <p className="alert-error">{errorText}</p>}
       </div>
 
-      <AnimatePresence mode="wait">
-        {result ? (
-          <motion.div
-            key="result"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className={cn("overflow-hidden rounded-2xl border bg-card ring-1", theme.ring)}
-          >
-            <div className={cn("flex items-center gap-3 px-6 py-4", theme.bg)}>
-              <Icon className={cn("size-5", theme.text)} />
-              <div className="flex-1">
-                <p className={cn("text-sm font-bold", theme.text)}>{result.label}</p>
-                <p className="text-xs text-muted-foreground">
-                  Confidence {Math.round(result.confidence * 100)}%
-                </p>
-              </div>
-              <Badge variant="outline" className="hidden sm:inline-flex">
-                model {result.model_version}
-              </Badge>
+      {result ? (
+        <div className="card reveal in">
+          <div className="result-head">
+            <span className="ric" style={{ background: ui.tint, color: ui.color }}>
+              <Icon />
+            </span>
+            <div style={{ flex: 1 }}>
+              <p style={{ fontWeight: 700, color: ui.color, fontSize: 15 }}>{result.label}</p>
+              <p style={{ fontSize: 12, color: "var(--muted-hex)" }}>Confidence {Math.round(result.confidence * 100)}%</p>
             </div>
+            <span className={`chip ${ui.chip}`}><span className="d" /> {pct}% scam</span>
+          </div>
 
-            <div className="grid gap-6 p-6 sm:grid-cols-[auto_1fr] sm:items-center">
-              <div className="mx-auto">
-                <RiskGauge probability={result.scam_probability} band={band} />
-              </div>
-
-              <div className="space-y-4">
-                <p className="text-sm leading-relaxed text-foreground/90">
-                  {result.explanation}
-                </p>
-
-                {result.highlighted_words.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Suspicious words
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {result.highlighted_words.map((w, i) => (
-                        <motion.span
-                          key={w.word + i}
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.1 + i * 0.05 }}
-                          className="rounded-full border border-danger/30 bg-danger/10 px-2.5 py-1 text-xs font-medium text-danger"
-                        >
-                          {w.word}
-                        </motion.span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+          <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 16 }}>
+            <div className="bar">
+              <i style={{ width: `${pct}%`, background: ui.color }} />
             </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="hint"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-border/70 py-10 text-sm text-muted-foreground"
-          >
-            <Sparkles className="size-4 text-primary" />
-            Your Safe / Suspicious / Scam verdict will appear here.
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <p style={{ fontSize: 14, lineHeight: 1.6, color: "var(--ink-2)" }}>{result.explanation}</p>
+
+            {result.highlighted_words.length > 0 && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "var(--muted-hex)" }}>
+                  Suspicious words
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  {result.highlighted_words.map((w, i) => (
+                    <span key={w.word + i} className="chip-word">{w.word}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <p style={{ fontSize: 11.5, color: "var(--muted-hex)" }}>Model {result.model_version}</p>
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 16, border: "1px dashed var(--border-2)", padding: "40px 20px", fontSize: 13, color: "var(--muted-hex)" }}>
+          <Sparkles style={{ width: 16, height: 16, color: "var(--brand)" }} />
+          Your Safe / Suspicious / Scam verdict will appear here.
+        </div>
+      )}
     </div>
   );
 }

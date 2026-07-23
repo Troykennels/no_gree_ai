@@ -3,12 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
-import { Logo } from "@/components/brand/logo";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { BrainCircuit, Loader2, Mail, ShieldCheck } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
+import { AuthBrandPanel } from "@/components/brand/auth-brand-panel";
+import { Field, PasswordField } from "@/components/brand/auth-fields";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,62 +34,96 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="grid min-h-screen place-items-center mesh px-4">
-      <div className="w-full max-w-sm">
-        <Link href="/" className="mb-8 flex justify-center">
-          <Logo />
-        </Link>
-        <div className="rounded-2xl border border-border bg-card p-7 shadow-xl">
-          <h1 className="text-xl font-bold">Welcome back</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Log in to see your scan history and dashboard.
-          </p>
+    <main className="login-view">
+      <AuthBrandPanel />
 
-          <form onSubmit={onSubmit} className="mt-6 space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-              />
+      <div className="auth-panel">
+        <div className="auth-card">
+          <Link href="/" className="mini-logo">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.jpg" alt="No_Gree AI" />
+            <b>No_Gree AI</b>
+          </Link>
+
+          <h2>Welcome back</h2>
+          <p className="sub">Sign in to your No_Gree AI dashboard.</p>
+
+          <form onSubmit={onSubmit}>
+            <Field
+              id="email"
+              label="Email"
+              icon={<Mail />}
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={setEmail}
+              placeholder="you@example.com"
+            />
+            <PasswordField
+              value={password}
+              onChange={setPassword}
+              autoComplete="current-password"
+            />
+
+            <div className="row-between">
+              <label className="remember">
+                <input type="checkbox" /> Remember me
+              </label>
+              <Link href="/help" className="link-green">
+                Forgot password?
+              </Link>
             </div>
 
             {error && (
-              <p className="rounded-lg bg-danger/10 px-3 py-2 text-xs font-medium text-danger">
+              <p
+                style={{
+                  marginTop: 14,
+                  borderRadius: 10,
+                  background: "var(--crit-t)",
+                  color: "var(--crit)",
+                  padding: "9px 12px",
+                  fontSize: 12.5,
+                  fontWeight: 500,
+                }}
+              >
                 {error}
               </p>
             )}
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading && <Loader2 className="animate-spin" />}
-              Log in
-            </Button>
+            <button type="submit" className="btn primary block" disabled={loading}>
+              {loading && <Loader2 className="animate-spin" style={{ width: 17, height: 17 }} />}
+              Sign in
+            </button>
           </form>
-        </div>
 
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          New to SecureNaija?{" "}
-          <Link href="/register" className="font-semibold text-primary hover:underline">
-            Create an account
-          </Link>
-        </p>
+          <div className="divider">New to No_Gree AI?</div>
+
+          <div className="tryfree-note" style={{ borderTop: 0, paddingTop: 0, marginTop: 0 }}>
+            Create a free account and start scanning in seconds.
+            <Link href="/register" className="btn tryfree">
+              Create a free account
+            </Link>
+          </div>
+
+          <div
+            style={{
+              marginTop: 24,
+              display: "flex",
+              justifyContent: "center",
+              gap: 16,
+              fontSize: 11,
+              color: "var(--muted-hex)",
+            }}
+          >
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <ShieldCheck style={{ width: 14, height: 14 }} /> Bank-grade security
+            </span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <BrainCircuit style={{ width: 14, height: 14 }} /> AI-powered
+            </span>
+          </div>
+        </div>
       </div>
     </main>
   );

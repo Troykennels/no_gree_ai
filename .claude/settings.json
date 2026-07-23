@@ -80,7 +80,10 @@
       "Bash(DATABASE_URL=\"sqlite:///C:/Users/user/Desktop/SecureNaija AI/apps/api/securenaija_dev.db\" MODEL_REGISTRY_DIR=\"C:/Users/user/Desktop/SecureNaija AI/ml/models\" API_ENV=development CORS_ORIGINS=\"http://localhost:3000\" ADMIN_EMAILS=\"admin@securenaija.ng\" ../../ml/.venv/Scripts/python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000)",
       "Bash(ml/.venv/Scripts/python.exe \"C:/Users/user/AppData/Local/Temp/claude/c--Users-user-Desktop-SecureNaija-AI/0190828e-9e28-4a6f-9f92-982e979a91f2/scratchpad/ml_audit.py\")",
       "Bash(.venv/Scripts/python.exe -m snaija_ml.data.rebuild_ieee_raw --every 4)",
-      "Bash(.venv/Scripts/python.exe -m snaija_ml.pipelines.train_transaction_fraud --sample-rows 0 --recent-window 0 --n-jobs 2)"
+      "Bash(.venv/Scripts/python.exe -m snaija_ml.pipelines.train_transaction_fraud --sample-rows 0 --recent-window 0 --n-jobs 2)",
+      "Bash(curl -s -o /tmp/l.html -w \"%{http_code}\" --retry 40 --retry-delay 3 --retry-connrefused --max-time 220 http://localhost:3000/login)",
+      "Bash(ml/.venv/Scripts/python.exe -m py_compile apps/api/app/infrastructure/security/audit.py apps/api/app/infrastructure/db/repositories.py apps/api/app/interface/routes/auth.py apps/api/app/interface/routes/admin.py apps/api/app/interface/dependencies.py apps/api/app/interface/error_handlers.py)",
+      "Bash(bash \"C:/Users/user/AppData/Local/Temp/claude/c--Users-user-Desktop-SecureNaija-AI/0190828e-9e28-4a6f-9f92-982e979a91f2/scratchpad/verify_platform.sh\")"
     ]
   }
 }

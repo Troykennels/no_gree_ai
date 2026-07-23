@@ -44,16 +44,12 @@ export function NotificationMenu() {
     <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="relative grid size-10 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+        className="icon-btn"
         aria-label={`Notifications${unreadCount ? `, ${unreadCount} unread` : ""}`}
         aria-expanded={open}
       >
-        {unreadCount > 0 ? <BellRing className="size-5" /> : <Bell className="size-5" />}
-        {unreadCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 grid min-w-[18px] place-items-center rounded-full bg-danger px-1 text-[10px] font-bold text-white">
-            {unreadCount > 9 ? "9+" : unreadCount}
-          </span>
-        )}
+        {unreadCount > 0 ? <BellRing /> : <Bell />}
+        {unreadCount > 0 && <span className="badge">{unreadCount > 9 ? "9+" : unreadCount}</span>}
       </button>
 
       <AnimatePresence>

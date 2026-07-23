@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Logo } from "./logo";
-import { Button } from "@/components/ui/button";
 import { NotificationMenu } from "@/components/notifications/notification-menu";
+import { UserMenu } from "./user-menu";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
@@ -34,7 +34,7 @@ export function Navbar() {
       )}
     >
       <nav className="container flex h-16 items-center justify-between">
-        <Link href="/" aria-label="SecureNaija home">
+        <Link href="/" aria-label="No_Gree AI home">
           <Logo />
         </Link>
 
@@ -52,14 +52,7 @@ export function Navbar() {
 
         <div className="hidden items-center gap-2 md:flex">
           <NotificationMenu />
-          <Link href="/login">
-            <Button variant="ghost" size="sm">
-              Log in
-            </Button>
-          </Link>
-          <Link href="/intelligence">
-            <Button size="sm">Try it free</Button>
-          </Link>
+          <UserMenu />
         </div>
 
         <div className="flex items-center gap-1 md:hidden">
@@ -88,15 +81,8 @@ export function Navbar() {
                 {l.label}
               </Link>
             ))}
-            <div className="mt-2 flex gap-2">
-              <Link href="/login" className="flex-1" onClick={() => setOpen(false)}>
-                <Button variant="outline" className="w-full">
-                  Log in
-                </Button>
-              </Link>
-              <Link href="/intelligence" className="flex-1" onClick={() => setOpen(false)}>
-                <Button className="w-full">Try it free</Button>
-              </Link>
+            <div className="mt-2 flex items-center gap-2 border-t border-border/60 pt-3">
+              <UserMenu onNavigate={() => setOpen(false)} />
             </div>
           </div>
         </div>

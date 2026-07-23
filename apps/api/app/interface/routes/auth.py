@@ -12,10 +12,13 @@ from app.application.use_cases.auth import AuthenticateUser, RegisterUser
 from app.core import security
 from app.core.rate_limit import limiter
 from app.domain.entities import User
+from app.infrastructure.db.repositories import SqlAlchemyUserRepository
+from app.infrastructure.security.audit import get_audit_store
 from app.interface.dependencies import (
     get_authenticate_user,
     get_current_user,
     get_register_user,
+    get_user_repository,
 )
 from app.interface.schemas import (
     LoginRequest,
@@ -83,3 +86,14 @@ def logout(_: Annotated[User, Depends(get_current_user)]) -> None:
 @router.get("/me", response_model=UserResponse)
 def me(user: Annotated[User, Depends(get_current_user)]) -> UserResponse:
     return UserResponse.model_validate(user)
+
+
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+def delete_me(
+    user: Annotated[User, Depends(get_current_user)],
+    users: Annotated[SqlAlchemyUserRepository, Depends(get_user_repository)],
+) -> None:
+    """Delete the signed-in user and all their scans (NDPR right to erasure)."""
+    users.delete_by_id(user.id)
+    get_audit_store().record("account_deleted", actor=user.email)
+    return None

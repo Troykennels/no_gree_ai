@@ -167,11 +167,15 @@ def get_current_user(
 
 def require_admin(user: Annotated[User, Depends(get_current_user)]) -> User:
     """Requires an authenticated user with the admin role (RBAC)."""
+    from app.infrastructure.security.audit import get_audit_store
+
     if not user.is_admin:
         logging.getLogger("securenaija.api").warning(
             "rbac_denied user=%s role=%s", user.email, user.role)
+        get_audit_store().record("rbac_denied", actor=user.email, detail="admin access denied")
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
     logging.getLogger("securenaija.api").info("admin_access user=%s", user.email)
+    get_audit_store().record("admin_access", actor=user.email)
     return user
 
 

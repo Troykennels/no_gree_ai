@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/components/brand/navbar";
-import { Footer } from "@/components/brand/footer";
+import { AppShell } from "@/components/app/app-shell";
+import { PageHeader } from "@/components/app/page-header";
 import { FraudDashboard } from "@/components/monitor/fraud-dashboard";
 
 export const metadata: Metadata = {
@@ -11,14 +11,13 @@ export const metadata: Metadata = {
 
 export default function MonitorPage() {
   return (
-    <>
-      <Navbar />
-      <main className="pt-24 pb-20">
-        <div className="container">
-          <FraudDashboard />
-        </div>
-      </main>
-      <Footer />
-    </>
+    <AppShell>
+      <PageHeader
+        eyebrow="Live"
+        title="Fraud Command Center"
+        description="Real-time security score, threat timeline, heatmap, analytics and live alerts — all updating automatically."
+      />
+      <FraudDashboard />
+    </AppShell>
   );
 }

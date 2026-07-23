@@ -3,15 +3,13 @@
 import { useState } from "react";
 import { motion, MotionConfig } from "framer-motion";
 import {
-  Activity, Play, Square, FileText, Sparkles, Bell, MessageSquare,
+  Activity, Play, Square, FileText, Bell, MessageSquare,
   CreditCard, ShieldAlert, PieChart, TrendingUp, MapPin, Download,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { useLiveData } from "@/lib/live-provider";
 import type { EngineAlert } from "@/lib/types";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn, downloadCsv } from "@/lib/utils";
 import { SecurityScore } from "./security-score";
 import { RiskScore } from "./risk-score";
@@ -42,14 +40,16 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <Card className={cn("flex flex-col p-5", className)}>
-      <div className="mb-4 flex items-center gap-2">
-        <Icon className="size-4 text-primary" aria-hidden />
-        <h2 className="text-sm font-semibold">{title}</h2>
-        {badge ? <Badge variant="outline" className="ml-auto">{badge}</Badge> : null}
+    <div className={cn("card flex h-full flex-col", className)}>
+      <div className="card-h">
+        <h3 className="flex items-center gap-2">
+          <Icon className="size-4" style={{ color: "var(--brand-600)" }} aria-hidden />
+          {title}
+        </h3>
+        {badge ? <span className="chip" style={{ background: "var(--surface-2)", color: "var(--muted-hex)" }}>{badge}</span> : null}
       </div>
-      <div className={cn("flex-1", contentClass)}>{children}</div>
-    </Card>
+      <div className={cn("flex-1 p-5", contentClass)}>{children}</div>
+    </div>
   );
 }
 
@@ -90,53 +90,34 @@ export function FraudDashboard() {
         region: a.region, detail: a.title, ts: a.ts,
       })),
     ];
-    downloadCsv(`securenaija-live-${new Date().toISOString().slice(0, 10)}.csv`, rows);
+    downloadCsv(`nogree-live-${new Date().toISOString().slice(0, 10)}.csv`, rows);
   };
 
   const s = state;
 
   return (
     <MotionConfig reducedMotion="user">
-      {/* Header */}
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="inline-grid size-8 place-items-center rounded-xl bg-primary/10">
-              <Sparkles className="size-4 text-primary" aria-hidden />
-            </span>
-            <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
-              Fraud Intelligence
-            </h1>
-          </div>
-          <p className="mt-1.5 flex items-center gap-2 text-sm text-muted-foreground"
-            role="status" aria-live="polite">
-            <span className="inline-flex items-center gap-1.5">
-              <span className={cn("relative flex size-2")}>
-                <span className={cn("absolute inline-flex size-full rounded-full opacity-75",
-                  connected ? "animate-ping bg-success" : "bg-muted-foreground")} />
-                <span className={cn("relative inline-flex size-2 rounded-full",
-                  connected ? "bg-success" : "bg-muted-foreground")} />
-              </span>
-              {connected ? "Live - updating automatically" : "Connecting…"}
-            </span>
-            {s ? <span className="text-muted-foreground/70">· {s.live_subscribers} watching</span> : null}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={exportCsv}
+      {/* Control bar */}
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <span className="livebadge" role="status" aria-live="polite">
+          <span className={cn("dot-live", !connected && "opacity-60")} />
+          <span>{connected ? "Live — updating automatically" : "Connecting…"}</span>
+          {s ? <span style={{ opacity: 0.7 }}>· {s.live_subscribers} watching</span> : null}
+        </span>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button className="head-btn" onClick={exportCsv}
             disabled={!s || (s.recent_messages.length + s.recent_transactions.length + s.alerts.length === 0)}
             aria-label="Download live data as CSV">
             <Download /> Download CSV
-          </Button>
+          </button>
           {simRunning ? (
-            <Button variant="outline" size="sm" onClick={stopDemo} disabled={busy}
-              aria-label="Stop live demo">
+            <button className="head-btn" onClick={stopDemo} disabled={busy} aria-label="Stop live demo">
               <Square /> Stop demo
-            </Button>
+            </button>
           ) : (
-            <Button size="sm" onClick={startDemo} disabled={busy} aria-label="Start live demo">
+            <button className="head-btn primary" onClick={startDemo} disabled={busy} aria-label="Start live demo">
               <Play /> Start live demo
-            </Button>
+            </button>
           )}
         </div>
       </div>

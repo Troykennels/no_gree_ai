@@ -11,9 +11,10 @@ import json
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.domain.entities import User
+from app.infrastructure.security.audit import get_audit_store
 from app.interface.dependencies import require_admin
 
 router = APIRouter(tags=["admin"], prefix="/admin")
@@ -38,3 +39,13 @@ def dataset_report(_: Annotated[User, Depends(require_admin)]) -> dict:
                    "`python -m snaija_ml.data.preprocess`.",
         )
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+@router.get("/audit-logs")
+def audit_logs(
+    _: Annotated[User, Depends(require_admin)],
+    limit: Annotated[int, Query(ge=1, le=500)] = 100,
+) -> dict:
+    """Security audit trail: auth failures, admin access, account changes."""
+    store = get_audit_store()
+    return {"items": store.recent(limit), "total": store.count}

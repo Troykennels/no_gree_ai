@@ -34,9 +34,11 @@ def register_error_handlers(app: FastAPI) -> None:
     async def _handle_application_error(request: Request, exc: ApplicationError) -> JSONResponse:
         code = _STATUS_MAP.get(type(exc), status.HTTP_400_BAD_REQUEST)
         if type(exc) in _AUDIT:
-            logger.warning("auth_event=%s path=%s client=%s",
-                           type(exc).__name__, request.url.path,
-                           request.client.host if request.client else "?")
+            client = request.client.host if request.client else "?"
+            logger.warning("auth_event=%s path=%s client=%s", type(exc).__name__,
+                           request.url.path, client)
+            from app.infrastructure.security.audit import get_audit_store
+            get_audit_store().record(type(exc).__name__, actor=client, detail=request.url.path)
         return JSONResponse(status_code=code, content={"detail": str(exc)})
 
     @app.exception_handler(Exception)

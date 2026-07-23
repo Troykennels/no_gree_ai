@@ -1,4 +1,4 @@
-"""Engine status - readiness of every model in the SecureNaija AI Engine."""
+"""Engine status - readiness of every model in the No_Gree AI Engine."""
 
 from __future__ import annotations
 

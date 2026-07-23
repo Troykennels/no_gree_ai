@@ -11,6 +11,6 @@ python-multipart>=0.0.9
 email-validator>=2.1
 slowapi>=0.1.9
 
-# SecureNaija ML package (installed editable from the monorepo).
+# No_Gree AI ML package (installed editable from the monorepo).
 # In Docker this is installed via `pip install -e ./ml`.
 -e ../../ml

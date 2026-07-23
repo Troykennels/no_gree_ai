@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Sora } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 
@@ -8,34 +8,50 @@ const inter = Inter({
   variable: "--font-sans",
   display: "swap",
 });
-const sora = Sora({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
-  weight: ["600", "700", "800"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "SecureNaija - Stop fraud before money is lost",
-    template: "%s · SecureNaija",
+    default: "No_Gree AI — Fraud Intelligence",
+    template: "%s · No_Gree AI",
   },
   description:
-    "AI-powered fraud intelligence that protects Nigerians from fake bank SMS, WhatsApp scams, POS fraud and fake loan offers - before money is lost.",
+    "No_Gree AI — intelligent fraud detection and risk intelligence that protects Nigerians from fake bank SMS, WhatsApp scams, POS fraud and fake loan offers, before money is lost. Detect. Protect. Prevent.",
   keywords: [
     "Nigeria fraud detection",
     "fake bank SMS",
     "scam checker",
     "fraud AI",
+    "risk intelligence",
     "phishing",
   ],
+  icons: {
+    icon: "/logo.jpg",
+    apple: "/logo.jpg",
+  },
   openGraph: {
-    title: "SecureNaija - Stop fraud before money is lost",
+    title: "No_Gree AI — Fraud Intelligence",
     description:
-      "Paste any suspicious message and get an instant AI fraud verdict with a clear explanation.",
+      "Paste any suspicious message and get an instant AI fraud verdict with a clear explanation. Detect. Protect. Prevent.",
     type: "website",
   },
 };
+
+// Applied before hydration to avoid a theme flash. Defaults to dark.
+const themeScript = `
+(function(){
+  try {
+    var t = localStorage.getItem('nogree.theme');
+    if (t === 'light') { document.documentElement.classList.remove('dark'); }
+    else { document.documentElement.classList.add('dark'); }
+  } catch (e) { document.documentElement.classList.add('dark'); }
+})();
+`;
 
 export default function RootLayout({
   children,
@@ -43,7 +59,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${sora.variable} dark`}>
+    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} dark`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="min-h-screen font-sans antialiased">
         <Providers>{children}</Providers>
       </body>

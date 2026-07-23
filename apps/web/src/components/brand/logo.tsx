@@ -1,44 +1,38 @@
 import { cn } from "@/lib/utils";
 
+/**
+ * No_Gree AI brand lockup. The mark is the shield logo on a dark tile;
+ * the wordmark uses the brand green ("No_") + red ("Gree") + an "AI" chip.
+ */
 export function Logo({
   className,
   showWordmark = true,
+  size = 36,
 }: {
   className?: string;
   showWordmark?: boolean;
+  size?: number;
 }) {
   return (
     <span className={cn("flex items-center gap-2.5", className)}>
-      <span className="relative grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-primary to-emerald-400 shadow-lg shadow-primary/30">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          className="h-5 w-5 text-primary-foreground"
-          aria-hidden
-        >
-          <path
-            d="M12 2.5 4 5.5v5.2c0 4.9 3.3 8.7 8 10.8 4.7-2.1 8-5.9 8-10.8V5.5L12 2.5Z"
-            fill="currentColor"
-            fillOpacity="0.18"
-          />
-          <path
-            d="M12 2.5 4 5.5v5.2c0 4.9 3.3 8.7 8 10.8 4.7-2.1 8-5.9 8-10.8V5.5L12 2.5Z"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
-          <path
-            d="m8.6 12 2.3 2.3 4.5-4.6"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+      <span
+        className="relative grid shrink-0 place-items-center overflow-hidden rounded-xl bg-black shadow-md-brand"
+        style={{ width: size, height: size }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo.jpg"
+          alt="No_Gree AI"
+          className="h-full w-full object-cover"
+        />
       </span>
       {showWordmark && (
-        <span className="text-lg font-bold tracking-tight">
-          Secure<span className="text-primary">Naija</span>
+        <span className="font-display text-lg font-bold leading-none tracking-tight">
+          <span style={{ color: "var(--neon-green)" }}>No_</span>
+          <span style={{ color: "var(--neon-red)" }}>Gree</span>
+          <span className="ml-1.5 inline-flex items-center rounded-[5px] border border-white/15 bg-neutral-900 px-1.5 py-0.5 text-[0.62em] font-bold text-white">
+            AI
+          </span>
         </span>
       )}
     </span>

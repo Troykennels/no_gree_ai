@@ -1,4 +1,4 @@
-"""The SecureNaija Automation Engine API.
+"""The No_Gree AI Automation Engine API.
 
 Real-time, no-manual-refresh operations:
 

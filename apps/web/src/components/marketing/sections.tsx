@@ -42,7 +42,7 @@ export function ProblemSection() {
           </h2>
           <p className="mt-4 text-muted-foreground">
             Today&apos;s systems flag fraud <em>after</em> the money is gone.
-            SecureNaija flips that - catching the scam at the moment it lands in
+            No_Gree AI flips that — catching the scam at the moment it lands in
             your inbox.
           </p>
         </motion.div>
@@ -151,7 +151,7 @@ export function Features() {
       <div className="container">
         <motion.div {...fadeUp} className="mx-auto max-w-2xl text-center">
           <span className="text-sm font-semibold uppercase tracking-wider text-primary">
-            Why SecureNaija
+            Why No_Gree AI
           </span>
           <h2 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">
             Enterprise-grade fraud intelligence
@@ -197,7 +197,7 @@ export function TrustSection() {
             </motion.h2>
             <motion.p {...fadeUp} className="mt-4 text-muted-foreground">
               From a student checking a scholarship SMS to a bank screening
-              millions of messages - SecureNaija scales with you.
+              millions of messages — No_Gree AI scales with you.
             </motion.p>
           </div>
 
@@ -216,7 +216,7 @@ export function TrustSection() {
           </div>
 
           <p className="mt-10 text-center text-sm text-muted-foreground">
-            🔒 SecureNaija never asks for your BVN, OTP, PIN or bank password.
+            🔒 No_Gree AI never asks for your BVN, OTP, PIN or bank password.
           </p>
         </div>
       </div>
