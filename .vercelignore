@@ -1,0 +1,9 @@
+apps/api
+ml
+infra
+docs
+.github
+*.md
+uiux.txt
+**/__pycache__
+**/.venv

@@ -130,7 +130,7 @@ class MessageFraudPredictor:
         is_fraud = proba >= self.threshold
 
         contributions = self._explain(matrix, top_k=top_k)
-        verdict = self._verdict(proba, is_fraud, contributions)
+        verdict = self._verdict(proba, band, contributions)
 
         return Prediction(
             fraud_probability=round(proba, 4),
@@ -209,20 +209,35 @@ class MessageFraudPredictor:
         return "minimal", "Looks safe"
 
     @staticmethod
-    def _verdict(proba: float, is_fraud: bool, contributions: list[Contribution]) -> str:
-        top_reasons = [c.label for c in contributions if c.signal == "fraud"][:2]
+    def _verdict(proba: float, band: str, contributions: list[Contribution]) -> str:
+        """Exact, confident verdict tied to the risk band.
+
+        Fraud reasons are only cited on fraud-flagged bands, so a message the model
+        judged legitimate never comes back with a contradictory "fraud" warning.
+        """
         pct = round(proba * 100)
-        if not is_fraud:
-            return (
-                f"This message looks safe ({pct}% fraud risk). Still, never share "
-                f"your BVN, OTP or PIN with anyone."
-            )
-        reason = f" It {top_reasons[0].lower()}" if top_reasons else ""
-        also = f" and {top_reasons[1].lower()}" if len(top_reasons) > 1 else ""
-        return (
-            f"Warning - this looks like fraud ({pct}% risk).{reason}{also}. "
-            f"Do not click any links, call any numbers, or share personal details."
-        )
+        top_reasons = [c.label for c in contributions if c.signal == "fraud"][:2]
+        reason = ""
+        if top_reasons and band in ("elevated", "high", "critical"):
+            reason = " It " + top_reasons[0].lower()
+            if len(top_reasons) > 1:
+                reason += ", and " + top_reasons[1].lower()
+            reason += "."
+
+        if band == "critical":
+            return (f"Danger - this is almost certainly a scam ({pct}% fraud risk).{reason} "
+                    f"Do not click links, call numbers, or share your BVN, OTP or PIN.")
+        if band == "high":
+            return (f"Warning - this is very likely fraud ({pct}% fraud risk).{reason} "
+                    f"Do not act on it; contact your bank on the number printed on your card.")
+        if band == "elevated":
+            return (f"Be careful - this looks like fraud ({pct}% fraud risk).{reason} "
+                    f"Verify the sender through an official channel before you do anything.")
+        if band == "low":
+            return (f"This looks legitimate ({pct}% fraud risk) - no strong signs of fraud. "
+                    f"Stay alert and never share your BVN, OTP or PIN.")
+        return (f"This message looks safe ({pct}% fraud risk). No fraud signals detected - "
+                f"just never share your BVN, OTP or PIN with anyone.")
 
 
 @lru_cache(maxsize=1)

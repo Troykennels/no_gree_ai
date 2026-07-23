@@ -8,9 +8,9 @@
     "Suspicious",
     "Scam"
   ],
-  "suspicious_threshold": 0.2276,
-  "scam_threshold": 0.4139,
-  "threshold_objective": "F2 (recall-weighted)",
+  "suspicious_threshold": 0.6,
+  "scam_threshold": 0.8,
+  "threshold_objective": "balanced - only flag Suspicious/Scam when the model is confident, so legitimate messages read as Safe",
   "cross_validation": {
     "roc_auc_mean": 0.9923,
     "roc_auc_std": 0.0031

@@ -4,8 +4,8 @@
   "trained_at": "2026-07-21T09:12:46.907658+00:00",
   "algorithm": "TF-IDF + engineered Nigeria-aware signals + XGBoost",
   "calibration": "platt (sigmoid on margin)",
-  "decision_threshold": 0.2026,
-  "threshold_objective": "F2 (recall-weighted)",
+  "decision_threshold": 0.5,
+  "threshold_objective": "balanced (0.5) - only flag fraud when the model is actually confident, so legitimate messages are not falsely warned",
   "n_estimators": 180,
   "risk_bands": [
     {
@@ -20,18 +20,18 @@
     },
     {
       "band": "elevated",
-      "min": 0.45,
-      "label": "Suspicious - be careful"
+      "min": 0.5,
+      "label": "Likely fraud"
     },
     {
       "band": "low",
-      "min": 0.2,
-      "label": "Probably safe"
+      "min": 0.25,
+      "label": "Likely safe"
     },
     {
       "band": "minimal",
       "min": 0.0,
-      "label": "Looks safe"
+      "label": "Safe"
     }
   ],
   "n_features_engineered": 13,

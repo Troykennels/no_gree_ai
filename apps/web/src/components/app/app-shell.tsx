@@ -196,14 +196,21 @@ function UserBlock({
   }
 
   return (
-    <div className="user">
-      <span className="avatar">{initial}</span>
-      <div className="who">
-        {user?.full_name}
-        <small>{user?.email}</small>
+    <div>
+      <div className="user" style={{ cursor: "default" }}>
+        <span className="avatar">{initial}</span>
+        <div className="who">
+          {user?.full_name}
+          <small>{user?.email}</small>
+        </div>
       </div>
-      <button className="out" onClick={logout} aria-label="Log out" title="Log out">
-        <LogOut />
+      <button
+        className="btn"
+        onClick={logout}
+        aria-label="Log out"
+        style={{ marginTop: 8, justifyContent: "center", gap: 8 }}
+      >
+        <LogOut style={{ width: 16, height: 16 }} /> Log out
       </button>
     </div>
   );
