@@ -44,7 +44,7 @@ export default function PrivacyPage() {
         <PageHeader
           eyebrow="Trust & compliance"
           title="Privacy Centre"
-          description="No_Gree AI is built for Nigeria and aligned with the NDPR. Here is exactly what we collect, how we protect it, and how you stay in control."
+          description="No Gree AI is built for Nigeria and aligned with the NDPR. Here is exactly what we collect, how we protect it, and how you stay in control."
         />
 
         <div className="grid gap-4 sm:grid-cols-2">

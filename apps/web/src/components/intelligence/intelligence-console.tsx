@@ -72,7 +72,7 @@ export function IntelligenceConsole() {
           ? "The models are still starting up. Try again in a moment."
           : mutation.error.message
       : mutation.error
-        ? "Could not reach the No_Gree AI API. Is it running?"
+        ? "Could not reach the No Gree AI API. Is it running?"
         : null;
 
   const canSubmit = message.trim().length > 0 || (showTxn && (amount || email));

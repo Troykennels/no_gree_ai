@@ -43,8 +43,8 @@ export default function RegisterPage() {
         <div className="auth-card">
           <Link href="/" className="mini-logo">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.jpg" alt="No_Gree AI" />
-            <b>No_Gree AI</b>
+            <img src="/logo.jpg" alt="No Gree AI" />
+            <b>No Gree AI</b>
           </Link>
 
           <h2>Create your account</h2>

@@ -200,7 +200,7 @@ export default function DashboardPage() {
       )}
 
       <p className="footnote">
-        No_Gree AI · Detect. Protect. Prevent. - {connected ? "Live protection active" : "Reconnecting to live feed…"}
+        No Gree AI · Detect. Protect. Prevent. - {connected ? "Live protection active" : "Reconnecting to live feed…"}
       </p>
     </AppShell>
   );

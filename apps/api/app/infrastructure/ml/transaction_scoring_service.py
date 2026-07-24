@@ -11,7 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-# No_Gree AI is a Nigerian product: callers send amounts in Naira (NGN). The
+# No Gree AI is a Nigerian product: callers send amounts in Naira (NGN). The
 # Model 2 corpus (IEEE-CIS) is denominated in a smaller unit, so we scale NGN to
 # the model's training magnitude only for scoring - the Naira value is preserved
 # for display. Cosmetic demo rate; a real deployment would use a live FX feed.
@@ -79,6 +79,55 @@ class TransactionScoringService:
     def expected_fields(self) -> dict[str, list[str]]:
         return self._predictor.expected_fields if self._predictor else {"numeric": [], "categorical": []}
 
+    @staticmethod
+    def _input_risk(features: dict) -> tuple[float, list[str]]:
+        """Transparent rule-based risk over the fields a user actually supplies (in
+        Naira). Passed to the model as a risk floor so obviously risky inputs - very
+        large amounts, high account activity - are flagged even though the full
+        IEEE-CIS feature set is not available at manual entry time."""
+        risk = 0.0
+        reasons: list[str] = []
+        amt = features.get("TransactionAmt")
+        if amt is not None:
+            try:
+                ngn = float(amt)
+                if ngn >= 2_000_000:
+                    risk = max(risk, 0.85)
+                elif ngn >= 1_000_000:
+                    risk = max(risk, 0.62)
+                elif ngn >= 500_000:
+                    risk = max(risk, 0.42)
+                elif ngn >= 150_000:
+                    risk = max(risk, 0.22)
+                if ngn >= 500_000:
+                    reasons.append("Large or unusual amount")
+            except (TypeError, ValueError):
+                pass
+        activity = 0.0
+        for c in ("C1", "C13", "C14", "C2"):
+            v = features.get(c)
+            if v is None:
+                continue
+            try:
+                n = float(v)
+                if n >= 40:
+                    activity = max(activity, 0.70)
+                elif n >= 20:
+                    activity = max(activity, 0.50)
+                elif n >= 10:
+                    activity = max(activity, 0.30)
+            except (TypeError, ValueError):
+                pass
+        if activity > 0:
+            risk = max(risk, activity)
+            if activity >= 0.50:
+                reasons.append("Unusual account activity")
+        if str(features.get("card6", "")).lower() == "credit":
+            risk = min(0.97, risk + 0.04)
+        if str(features.get("ProductCD", "")).upper() in {"C", "S"}:
+            risk = min(0.97, risk + 0.04)
+        return min(risk, 0.97), reasons
+
     def score(self, features: dict) -> TransactionResult:
         if self._predictor is None:
             self._try_load()  # lazy retry in case it was trained after startup
@@ -94,7 +143,10 @@ class TransactionScoringService:
                 feats["TransactionAmt"] = float(amt) / NGN_PER_MODEL_UNIT
             except (TypeError, ValueError):
                 pass
-        p = self._predictor.predict(feats)
+        # Rule-based risk floor over the raw (Naira) fields the caller supplied, so
+        # the tool responds to obviously risky inputs (see _input_risk).
+        floor, floor_reasons = self._input_risk(features)
+        p = self._predictor.predict(feats, risk_floor=floor, floor_reasons=floor_reasons)
         return TransactionResult(
             fraud_probability=p.fraud_probability,
             confidence=p.confidence,

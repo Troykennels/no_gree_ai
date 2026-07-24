@@ -17,11 +17,11 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: {
-    default: "No_Gree AI - Fraud Intelligence",
-    template: "%s · No_Gree AI",
+    default: "No Gree AI - Fraud Intelligence",
+    template: "%s · No Gree AI",
   },
   description:
-    "No_Gree AI - intelligent fraud detection and risk intelligence that protects Nigerians from fake bank SMS, WhatsApp scams, POS fraud and fake loan offers, before money is lost. Detect. Protect. Prevent.",
+    "No Gree AI - intelligent fraud detection and risk intelligence that protects Nigerians from fake bank SMS, WhatsApp scams, POS fraud and fake loan offers, before money is lost. Detect. Protect. Prevent.",
   keywords: [
     "Nigeria fraud detection",
     "fake bank SMS",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     apple: "/logo.jpg",
   },
   openGraph: {
-    title: "No_Gree AI - Fraud Intelligence",
+    title: "No Gree AI - Fraud Intelligence",
     description:
       "Paste any suspicious message and get an instant AI fraud verdict with a clear explanation. Detect. Protect. Prevent.",
     type: "website",

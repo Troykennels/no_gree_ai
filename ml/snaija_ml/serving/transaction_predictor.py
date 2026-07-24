@@ -155,12 +155,18 @@ class TransactionFraudPredictor:
 
     # ── public API ─────────────────────────────────────────────────────────────
 
-    def predict(self, features: dict, top_k: int = 6) -> TransactionPrediction:
+    def predict(self, features: dict, top_k: int = 6, risk_floor: float = 0.0,
+                floor_reasons: list[str] | None = None) -> TransactionPrediction:
         row: dict[str, object] = {c: features.get(c, np.nan) for c in self._num_cols}
         row.update({c: features.get(c, None) for c in self._cat_cols})
         frame = pd.DataFrame([row], columns=self._input_cols)
 
-        proba = float(self._pipeline.predict_proba(frame)[0, 1])
+        model_proba = float(self._pipeline.predict_proba(frame)[0, 1])
+        # A rule-based risk floor over the fields a caller actually supplied keeps
+        # the tool responsive: the IEEE-CIS model needs its full ~400-column feature
+        # set to separate fraud, so with only a handful of inputs it sits near the
+        # base rate. Blending via max() lets an obviously risky payment be flagged.
+        proba = max(model_proba, max(0.0, min(1.0, risk_floor)))
         confidence = round(max(proba, 1.0 - proba), 4)
         is_fraud = proba >= self.threshold
         decision = ("decline" if proba >= self.threshold
@@ -168,6 +174,12 @@ class TransactionFraudPredictor:
         band, band_label = self._resolve_band(proba)
         factors = self._explain(frame, top_k)
         reasons = [f.label for f in factors if f.signal == "fraud"]
+        # When the rule-based floor drove the score, surface its drivers first so
+        # the explanation always matches the decision.
+        if risk_floor > model_proba and floor_reasons:
+            reasons = list(floor_reasons) + [r for r in reasons if r not in floor_reasons]
+            factors = [TxnFactor(feature="signal", label=r, signal="fraud",
+                                 weight=round(proba, 4)) for r in floor_reasons] + factors
         verdict = self._verdict(proba, decision, band_label, reasons)
         risk_explanation = self._risk_explanation(decision, proba)
 

@@ -46,12 +46,12 @@ export default function LoginPage() {
         <div className="auth-card">
           <Link href="/" className="mini-logo">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.jpg" alt="No_Gree AI" />
-            <b>No_Gree AI</b>
+            <img src="/logo.jpg" alt="No Gree AI" />
+            <b>No Gree AI</b>
           </Link>
 
           <h2>Welcome back</h2>
-          <p className="sub">Sign in to your No_Gree AI dashboard.</p>
+          <p className="sub">Sign in to your No Gree AI dashboard.</p>
 
           <form onSubmit={onSubmit}>
             <Field
@@ -102,7 +102,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="divider">New to No_Gree AI?</div>
+          <div className="divider">New to No Gree AI?</div>
 
           <div className="tryfree-note" style={{ borderTop: 0, paddingTop: 0, marginTop: 0 }}>
             Create a free account and start scanning in seconds.

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Help Centre",
-  description: "Answers to common questions about No_Gree AI fraud detection.",
+  description: "Answers to common questions about No Gree AI fraud detection.",
 };
 
 const STEPS = [
@@ -17,7 +17,7 @@ const STEPS = [
 ];
 
 const FAQ = [
-  { q: "Is No_Gree AI free?", a: "Yes. Anyone can check a message with no account. Sign up (free) to save your history and get a personal dashboard." },
+  { q: "Is No Gree AI free?", a: "Yes. Anyone can check a message with no account. Sign up (free) to save your history and get a personal dashboard." },
   { q: "Do you store my BVN, PIN or card number?", a: "Never in the clear. Those are automatically masked before anything is stored, shown, or streamed. See the Privacy Centre." },
   { q: "How accurate is it?", a: "Our scam detector scores ~99% on held-out messages and catches every common Nigerian scam type in our tests. No model is perfect, so always verify through your bank's official channel." },
   { q: "It flagged a real message as a scam. What now?", a: "Use the Safe/Scam buttons on the result. Your feedback trains the model to do better - that is the continuous-learning loop." },
@@ -32,7 +32,7 @@ export default function HelpPage() {
         <PageHeader
           eyebrow="Support"
           title="Help Centre"
-          description="Everything you need to get the most out of No_Gree AI."
+          description="Everything you need to get the most out of No Gree AI."
         />
 
         {/* How it works */}

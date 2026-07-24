@@ -83,7 +83,7 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(
-    title="No_Gree AI API",
+    title="No Gree AI API",
     version="0.2.0",
     description=(
         "AI-powered fraud intelligence for Nigeria. Detects fraud in SMS, WhatsApp, "
@@ -142,4 +142,4 @@ app.include_router(admin.router, prefix=API_V1)
 
 @app.get("/", tags=["system"])
 def root() -> dict[str, str]:
-    return {"name": "No_Gree AI API", "docs": "/docs", "health": f"{API_V1}/health"}
+    return {"name": "No Gree AI API", "docs": "/docs", "health": f"{API_V1}/health"}

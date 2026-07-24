@@ -62,7 +62,7 @@ export function Footer() {
       </div>
       <div className="border-t border-border/60">
         <div className="container flex flex-col items-center justify-between gap-2 py-6 text-xs text-muted-foreground sm:flex-row">
-          <p>© {new Date().getFullYear()} No_Gree AI. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} No Gree AI. All rights reserved.</p>
           <p>Built for Nigeria 🇳🇬 · Never share your BVN, OTP or PIN.</p>
         </div>
       </div>

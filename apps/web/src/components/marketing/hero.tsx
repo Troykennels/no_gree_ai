@@ -19,7 +19,7 @@ export function Hero() {
             className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
           >
             <ShieldCheck className="size-3.5" />
-            No_Gree AI · Fraud intelligence for Nigeria
+            No Gree AI · Fraud intelligence for Nigeria
           </motion.div>
 
           <motion.h1
@@ -39,7 +39,7 @@ export function Hero() {
             className="mt-5 text-lg text-muted-foreground"
           >
             Millions of Nigerians lose money to fake bank SMS, WhatsApp scams,
-            POS fraud and fake loans every year. No_Gree AI reads any suspicious
+            POS fraud and fake loans every year. No Gree AI reads any suspicious
             message and tells you if it&apos;s fraud - instantly, with reasons.
             <span className="mt-2 block font-semibold text-foreground">
               Detect. Protect. Prevent.

@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 
 /**
- * No_Gree AI brand lockup. The mark is the shield logo on a dark tile;
- * the wordmark uses the brand green ("No_") + red ("Gree") + an "AI" chip.
+ * No Gree AI brand lockup. The mark is the shield logo on a dark tile;
+ * the wordmark uses the brand green ("No") + red ("Gree") + an "AI" chip.
  */
 export function Logo({
   className,
@@ -22,13 +22,13 @@ export function Logo({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logo.jpg"
-          alt="No_Gree AI"
+          alt="No Gree AI"
           className="h-full w-full object-cover"
         />
       </span>
       {showWordmark && (
         <span className="font-display text-lg font-bold leading-none tracking-tight">
-          <span style={{ color: "var(--neon-green)" }}>No_</span>
+          <span style={{ color: "var(--neon-green)" }}>No</span>{" "}
           <span style={{ color: "var(--neon-red)" }}>Gree</span>
           <span className="ml-1.5 inline-flex items-center rounded-[5px] border border-white/15 bg-neutral-900 px-1.5 py-0.5 text-[0.62em] font-bold text-white">
             AI

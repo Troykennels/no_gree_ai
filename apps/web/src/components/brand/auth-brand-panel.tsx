@@ -25,9 +25,9 @@ export function AuthBrandPanel() {
       <div className="inner">
         <span className="logo-badge" style={{ width: 168, height: 168, borderRadius: 40 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.jpg" alt="No_Gree AI" />
+          <img src="/logo.jpg" alt="No Gree AI" />
         </span>
-        <h1>No_Gree AI</h1>
+        <h1>No Gree AI</h1>
         <p className="tagline">
           <span style={{ color: "var(--neon-green)" }}>Detect.</span>
           <span className="s">·</span>
@@ -56,7 +56,7 @@ export function AuthBrandPanel() {
       </div>
 
       <p className="poweredby">
-        Powered by <b>No_Gree AI</b>
+        Powered by <b>No Gree AI</b>
       </p>
     </div>
   );

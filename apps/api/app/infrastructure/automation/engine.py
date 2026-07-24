@@ -1,4 +1,4 @@
-"""The No_Gree AI Automation Engine — the always-on brain behind the live UI.
+"""The No Gree AI Automation Engine — the always-on brain behind the live UI.
 
 Every scored message and transaction flows through here. For each one the engine:
 

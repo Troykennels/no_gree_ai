@@ -20,7 +20,7 @@ export default function IntelligencePage() {
         />
         <IntelligenceConsole />
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          No_Gree AI gives guidance, not financial or legal advice. When in doubt,
+          No Gree AI gives guidance, not financial or legal advice. When in doubt,
           contact your bank through its official channels.
         </p>
       </div>

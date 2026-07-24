@@ -65,7 +65,7 @@ export function Detector({ compact = false, initialMessage = "" }: { compact?: b
         ? "The fraud model is still starting up. Please try again in a moment."
         : mutation.error.message
       : mutation.error
-        ? "Could not reach the No_Gree AI API. Is it running?"
+        ? "Could not reach the No Gree AI API. Is it running?"
         : null;
 
   const a = mutation.data?.assessment;

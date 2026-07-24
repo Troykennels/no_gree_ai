@@ -34,7 +34,7 @@ export function Navbar() {
       )}
     >
       <nav className="container flex h-16 items-center justify-between">
-        <Link href="/" aria-label="No_Gree AI home">
+        <Link href="/" aria-label="No Gree AI home">
           <Logo />
         </Link>
 

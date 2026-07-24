@@ -130,7 +130,7 @@ export function LiveDataProvider({ children }: { children: React.ReactNode }) {
     if (now - lastBrowserNotify.current < BROWSER_MIN_GAP_MS) return;
     lastBrowserNotify.current = now;
     try {
-      new Notification(`No_Gree AI · ${n.title}`, { body: n.body, tag: n.source });
+      new Notification(`No Gree AI · ${n.title}`, { body: n.body, tag: n.source });
     } catch {
       /* some browsers throw if not in a user gesture - ignore */
     }

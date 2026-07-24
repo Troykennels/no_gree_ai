@@ -37,7 +37,7 @@ export default function ScamPage() {
         <ScamAnalyzer />
         <HowItWorks steps={STEPS} advantages={ADVANTAGES} />
         <p className="footnote">
-          No_Gree AI gives guidance, not financial or legal advice. When in doubt, contact your bank through its official channels.
+          No Gree AI gives guidance, not financial or legal advice. When in doubt, contact your bank through its official channels.
         </p>
       </div>
     </AppShell>

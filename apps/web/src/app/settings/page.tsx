@@ -78,7 +78,7 @@ export default function SettingsPage() {
             <Card className="p-6">
               <SectionTitle icon={<Bell className="size-4 text-primary" />} title="Notifications" />
               <p className="mt-2 text-sm text-muted-foreground">
-                Get desktop alerts for high-risk fraud, even when No_Gree AI is in a
+                Get desktop alerts for high-risk fraud, even when No Gree AI is in a
                 background tab.
               </p>
               <div className="mt-4">

@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    /* --- shadcn HSL tokens (No_Gree AI palette, light) --- */
+    /* --- shadcn HSL tokens (No Gree AI palette, light) --- */
     --background: 140 18% 97%;
     --foreground: 160 30% 8%;
     --card: 0 0% 100%;
@@ -28,7 +28,7 @@
     --ring: 158 85% 28%;
     --radius: 0.75rem;
 
-    /* --- No_Gree design raw tokens (light) --- */
+    /* --- No Gree design raw tokens (light) --- */
     --canvas: #f5f8f6;
     --surface: #ffffff;
     --surface-2: #fafcfb;
@@ -66,7 +66,7 @@
   }
 
   .dark {
-    /* --- shadcn HSL tokens (No_Gree AI palette, dark) --- */
+    /* --- shadcn HSL tokens (No Gree AI palette, dark) --- */
     --background: 156 20% 5%;
     --foreground: 147 27% 94%;
     --card: 154 17% 8%;
@@ -89,7 +89,7 @@
     --input: 148 15% 17%;
     --ring: 158 64% 52%;
 
-    /* --- No_Gree design raw tokens (dark) --- */
+    /* --- No Gree design raw tokens (dark) --- */
     --canvas: #0a0f0d;
     --surface: #111815;
     --surface-2: #0e1512;
